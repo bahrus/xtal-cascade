@@ -1,0 +1,17 @@
+{
+  "name": "xtal-cascade",
+  "description": "Web component that creates a view model for a selectable tree ",
+  "main": "xtal-cascade.js",
+  "dependencies": {
+    "@polymer/polymer": "^3.0.0"
+  },
+  "devDependencies": {
+    "@polymer/iron-demo-helpers": "^3.0.0-pre.19",
+    "@webcomponents/webcomponentsjs": "^2.0.0",
+    "wct-browser-legacy": "^1.0.0"
+  },
+  "version": "0.0.0",
+  "repository": "https://github.com/bahrus/xtal-cascade",
+  "author": "bahrus <anderson.bruce.b@gmail.com>",
+  "license": "MIT"
+}
