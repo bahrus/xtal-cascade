@@ -1,14 +1,25 @@
 import { XtallatX } from 'xtal-latx/xtal-latx';
+
+export interface ITreeNode {
+}
+
+export interface ITree {
+    nodes: ITreeNode[];
+    childrenFn: (tn: ITreeNode) => ITreeNode[];
+
+}
 /**
  * `xtal-cascade`
- *  Cascade node selection up and down a tree collection
+ *  Cascade node selection up and down a tree collection 
  *
  * @customElement
  * @polymer
  * @demo demo/index.html
  */
 class XtalCascade extends XtallatX(HTMLElement) {
-    static get is() { return 'xtal-cascade'; }
+    static get is(){return 'xtal-cascade';}
+
+    _childrenFn: (tn: ITreeNode) => ITreeNode[];
     get childrenFn() {
         return this._childrenFn;
     }
@@ -16,6 +27,8 @@ class XtalCascade extends XtallatX(HTMLElement) {
         this._childrenFn = nodeFn;
         this.onPropsChange();
     }
+
+    _keyFn: (tn: ITreeNode) => string;
     get keyFn() {
         return this._keyFn;
     }
@@ -23,60 +36,71 @@ class XtalCascade extends XtallatX(HTMLElement) {
         this._keyFn = nodeFn;
         this.onPropsChange();
     }
+
+    _isSelectedFn: (tn: ITreeNode) => boolean;
     get isSelectedFn() {
         return this._isSelectedFn;
     }
     set isSelectedFn(nodeFn) {
         this._isSelectedFn = nodeFn;
     }
+
+    _isIndeterminateFn: (tn: ITreeNode) => boolean;
     get isIndeterminateFn() {
         return this._isIndeterminateFn;
     }
     set isIndeterminateFn(nodeFn) {
         this._isIndeterminateFn = nodeFn;
     }
+
+    _toggleNodeSelectionFn: (tn: ITreeNode) => boolean;
     get toggleNodeSelectionFn() {
         return this._toggleNodeSelectionFn;
     }
     set toggleNodeSelectionFn(nodeFn) {
         this._toggleNodeSelectionFn = nodeFn;
     }
+
+    _toggleInterminateFn: (tn: ITreeNode) => void;
     get toggleIndeterminateFn() {
         return this._toggleInterminateFn;
     }
     set toggleIndeterminateFn(nodeFn) {
         this._toggleInterminateFn = nodeFn;
     }
-    set toggledNodeSelection(tn) {
+
+    set toggledNodeSelection(tn: ITreeNode) {
         if (!this._isSelectedFn(tn)) {
             this.selectNodeAndCascade(tn);
-        }
-        else {
+        } else {
             this.unselectNodeAndCascade(tn);
         }
         //this._toggleNodeSelectionFn(tn);
         this.updateSelectedRootNodes();
     }
+
+
+
     connectedCallback() {
-        this._upgradeProperties(['childrenFn', 'nodes', 'keyFn', 'isSelectedFn', 'isIndeterminateFn', 'selectedRootNodes', 'toggleIndeterminateFn', 'toggleNodeSelectionFn']);
+        this._upgradeProperties(['childrenFn', 'nodes', 'keyFn', 'isSelectedFn', 'isIndeterminateFn', 'selectedRootNodes', 'toggleIndeterminateFn', 'toggleNodeSelectionFn'])
+
     }
-    selectNodeShallow(tn) {
-        if (!this._isSelectedFn(tn))
-            this._toggleNodeSelectionFn(tn);
-        if (this._isIndeterminateFn(tn))
-            this._toggleInterminateFn(tn);
+
+    selectNodeShallow(tn: ITreeNode) {
+        if (!this._isSelectedFn(tn)) this._toggleNodeSelectionFn(tn);
+        if (this._isIndeterminateFn(tn)) this._toggleInterminateFn(tn);
     }
-    unselectNodeShallow(tn) {
-        if (this._isSelectedFn(tn))
-            this._toggleNodeSelectionFn(tn);
-        if (this._isIndeterminateFn(tn))
-            this._toggleInterminateFn(tn);
+
+    unselectNodeShallow(tn: ITreeNode) {
+        if (this._isSelectedFn(tn)) this._toggleNodeSelectionFn(tn);
+        if (this._isIndeterminateFn(tn)) this._toggleInterminateFn(tn);
     }
-    setNodeIndeterminate(tn) {
-        if (!this._isIndeterminateFn(tn))
-            this._toggleInterminateFn(tn);
+
+    setNodeIndeterminate(tn: ITreeNode) {
+        if (!this._isIndeterminateFn(tn)) this._toggleInterminateFn(tn);
     }
-    selectNodeAndCascade(tn) {
+
+    selectNodeAndCascade(tn: ITreeNode) {
         this.selectNodeRecursive(tn);
         let currentNode = tn;
         do {
@@ -89,8 +113,7 @@ class XtalCascade extends XtallatX(HTMLElement) {
                 const children = this._childrenFn(parentNd);
                 if (this._selectedChildScore[parentId] === children.length) {
                     this.selectNodeShallow(parentNd);
-                }
-                else {
+                } else {
                     //this._toggleInterminateFn(parentNd);
                     this.setNodeIndeterminate(parentNd);
                 }
@@ -98,7 +121,8 @@ class XtalCascade extends XtallatX(HTMLElement) {
             currentNode = parentNd;
         } while (currentNode);
     }
-    unselectNodeAndCascade(tn) {
+
+    unselectNodeAndCascade(tn: ITreeNode) {
         this.unselectNodeRecursive(tn);
         let currentNode = tn;
         do {
@@ -110,18 +134,18 @@ class XtalCascade extends XtallatX(HTMLElement) {
                 //const children = this._childrenFn(parentNd);
                 if (this._selectedChildScore[parentId] === 0) {
                     this.unselectNodeShallow(parentNd);
-                }
-                else {
-                    if (!this._isIndeterminateFn(parentNd))
-                        this._toggleInterminateFn(parentNd);
-                    if (this._isSelectedFn(parentNd))
-                        this._toggleNodeSelectionFn(parentNd);
+                } else {
+                    if (!this._isIndeterminateFn(parentNd)) this._toggleInterminateFn(parentNd);
+                    if (this._isSelectedFn(parentNd)) this._toggleNodeSelectionFn(parentNd);
                 }
             }
             currentNode = parentNd;
         } while (currentNode);
     }
-    selectNodeRecursive(tn) {
+
+
+
+    selectNodeRecursive(tn: ITreeNode) {
         this.selectNodeShallow(tn);
         const children = this._childrenFn(tn);
         if (children) {
@@ -129,7 +153,8 @@ class XtalCascade extends XtallatX(HTMLElement) {
             children.forEach(child => this.selectNodeRecursive(child));
         }
     }
-    unselectNodeRecursive(tn) {
+
+    unselectNodeRecursive(tn: ITreeNode) {
         this.unselectNodeShallow(tn);
         const children = this._childrenFn(tn);
         if (children) {
@@ -137,25 +162,31 @@ class XtalCascade extends XtallatX(HTMLElement) {
             children.forEach(child => this.unselectNodeRecursive(child));
         }
     }
+
+    _nodes: ITreeNode[];
     get nodes() {
         return this._nodes;
     }
+
     set nodes(nodes) {
         this._nodes = nodes;
         this.onPropsChange();
     }
+
     onPropsChange() {
         if (!this._keyFn || !this._childrenFn || !this._nodes ||
-            !this._isSelectedFn || !this._toggleNodeSelectionFn || !this._toggleInterminateFn)
-            return;
+            !this._isSelectedFn || !this._toggleNodeSelectionFn || !this._toggleInterminateFn) return;
         this.startCreatingChildToParentLookup();
     }
+    _selectedChildScore: { [key: string]: number };
+    _childToParentLookup: { [key: string]: ITreeNode };
     startCreatingChildToParentLookup() {
         this._childToParentLookup = {};
         this._selectedChildScore = {};
         this.createChildToParentLookup(this._nodes, this._childToParentLookup);
     }
-    createChildToParentLookup(nodes, lookup) {
+
+    createChildToParentLookup(nodes: ITreeNode[], lookup: { [key: string]: ITreeNode }) {
         nodes.forEach(node => {
             const nodeKey = this._keyFn(node);
             const scs = this._selectedChildScore;
@@ -163,20 +194,18 @@ class XtalCascade extends XtallatX(HTMLElement) {
             const children = this._childrenFn(node);
             if (children) {
                 children.forEach(child => {
-                    if (this._isSelectedFn(child))
-                        scs[nodeKey]++;
+                    if (this._isSelectedFn(child)) scs[nodeKey]++;
                     const childId = this._keyFn(child);
                     lookup[childId] = node;
                 });
                 if (scs[nodeKey] === children.length) {
                     this.selectNodeShallow(node);
-                }
-                else if (scs[nodeKey] > 0) {
+                } else if (scs[nodeKey] > 0) {
                     this._toggleInterminateFn(node);
                 }
                 this.createChildToParentLookup(children, lookup);
             }
-        });
+        })
         this.updateSelectedRootNodes();
     }
     updateSelectedRootNodes() {
@@ -190,29 +219,30 @@ class XtalCascade extends XtallatX(HTMLElement) {
             },
             bubbles: true,
             composed: true
-        });
+        } as CustomEventInit);
         this.dispatchEvent(newEvent);
     }
-    _calculateSelectedRootNodes(nodes, acc) {
+    _calculateSelectedRootNodes(nodes: ITreeNode[], acc: ITreeNode[]) {
         nodes.forEach(node => {
             if (this._isSelectedFn(node)) {
                 acc.push(node);
-            }
-            else if (this._isIndeterminateFn(node)) {
+            } else if (this._isIndeterminateFn(node)) {
                 const children = this._childrenFn(node);
                 if (children) {
                     this._calculateSelectedRootNodes(children, acc);
                 }
             }
-        });
+        })
         return acc;
     }
+
+    _selectedRootNodes: ITreeNode[];
     get selectedRootNodes() {
         return this._selectedRootNodes;
     }
-    set selectedRootNodes(nodes) {
+    set selectedRootNodes(nodes: ITreeNode[]) {
         this._selectedRootNodes = nodes;
     }
+
 }
-customElements.define(XtalCascade.is, XtalCascade);
-//# sourceMappingURL=xtal-cascade.js.map
+customElements.define(XtalCascade.is, XtalCascade)
