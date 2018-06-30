@@ -2,7 +2,7 @@ import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
 
 /**
  * `xtal-cascade`
- * Web component that creates a view model for a selectable tree 
+ * View Model for a tree with selectable nodes
  *
  * @customElement
  * @polymer

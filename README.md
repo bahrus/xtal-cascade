@@ -1,6 +1,6 @@
 # \<xtal-cascade\>
 
-Web component that creates a view model for a selectable tree 
+View Model for a tree with selectable nodes
 
 ## Install the Polymer-CLI
 
