@@ -47,11 +47,12 @@
 
     </script>
     <style>
-      div.node {
+      div.row {
         cursor: pointer;
+        height:40px;
         display:flex;
         flex-direction: row;
-        height:40px;
+
       }
 
       span.match {
@@ -123,19 +124,21 @@
     <iron-list style="height:400px" id="nodeList" mutable-data p-d-if="#searchInput">
         <template>
           <div class="node"  style$="[[item.style]]"  p-d-if="#searchInput">
-            <span class="expander" node="[[item]]">
-                <template is="dom-if" if="[[item.children]]">
-                    <template is="dom-if" if="[[item.expanded]]">📖</template>
-                    <template is="dom-if" if="[[!item.expanded]]">📕</template>
-                  </template>
-                  <template is="dom-if" if="[[!item.children]]">📝</template>
-            </span>
-            <p-u on="click" if="span" to="/myTree{toggledNode:target.node}"></p-u>
-            <span class="toggler" on-click="toggleSelectedNode"  select-node="[[item]]">
-                <mwc-checkbox checked="[[item.isSelected]]" indeterminate="[[item.isIndeterminate]]"></mwc-checkbox>
-                <xtal-split search="[[search]]" text-content="[[item.name]]"></xtal-split>
-            </span>
-            <p-u on="click" if="mwc-checkbox,xtal-split" to="/myCascade{toggledNodeSelection:target.parentElement.selectNode}"></p-u>
+            <div class="row" p-d-if="#searchInput">
+                <span class="expander" node="[[item]]">
+                    <template is="dom-if" if="[[item.children]]">
+                        <template is="dom-if" if="[[item.expanded]]">📖</template>
+                        <template is="dom-if" if="[[!item.expanded]]">📕</template>
+                      </template>
+                      <template is="dom-if" if="[[!item.children]]">📝</template>
+                </span>
+                <p-u on="click" if="span" to="/myTree{toggledNode:target.node}"></p-u>
+                <span class="toggler" on-click="toggleSelectedNode"  select-node="[[item]]" p-d-if="#searchInput">
+                    <mwc-checkbox checked="[[item.isSelected]]" indeterminate="[[item.isIndeterminate]]"></mwc-checkbox>
+                    <xtal-split search="[[search]]" text-content="[[item.name]]"></xtal-split>
+                </span>
+                <p-u on="click" if="mwc-checkbox,xtal-split" to="/myCascade{toggledNodeSelection:target.parentElement.selectNode}"></p-u>
+            </div>
           </div>
         </template>
       </iron-list>
