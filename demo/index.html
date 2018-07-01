@@ -119,6 +119,7 @@
     </script>
     <p-d-x on="eval" to="{isSelectedFn:isSelectedFn;keyFn:keyFn;childrenFn:childrenFn;toggleIndeterminateFn:toggleIndeterminateFn;toggleNodeSelectionFn:toggleNodeSelectionFn;isIndeterminateFn:isIndeterminateFn}"></p-d-x>
     <xtal-cascade id="myCascade"></xtal-cascade>
+    <p-d on="selected-root-nodes-changed" to="#selectedNodeChangeHandler{input:target}" m="1"></p-d>
     <iron-list style="height:400px" id="nodeList" mutable-data p-d-if="#searchInput">
         <template>
           <div class="node"  style$="[[item.style]]"  p-d-if="#searchInput">
@@ -145,13 +146,21 @@
           }
         }
       </script>
-      <p-d id="viewNodesChangeHandler" on="eval" to="{whoknows}"></p-d>
+      <p-d id="viewNodesChangeHandler" on="eval" to="{NA}"></p-d>
       <script type="module ish">
         inp =>{
           fvi = nodeList.firstVisibleIndex;
         }
       </script>
-      <p-d id="toggledNodeChangeHandler" on="eval" to="{whoknows}"></p-d>
+      <p-d id="toggledNodeChangeHandler" on="eval" to="{NA}"></p-d>
+      <script type="module ish">
+        inp =>{
+          if(!nodeList.items) return;
+            nodeList.items = nodeList.items.slice();
+            nodeList.scrollToIndex(fvi);
+        }
+      </script>
+      <p-d id="selectedNodeChangeHandler" on="eval" to="{NA}"></p-d>
   </div>
 
 </body>
