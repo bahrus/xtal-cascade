@@ -61,6 +61,11 @@
       span.expander{
         margin-top:7px;
       }
+      span.toggler{
+        display:flex;
+        flex-direction: row;
+        align-items: center;
+      }
     </style>
     <button onclick="expandAll()">Expand All</button>
     <button onclick="collapseAll()">Collapse All</button>
@@ -125,7 +130,7 @@
                   <template is="dom-if" if="[[!item.children]]">📝</template>
             </span>
             <p-u on="click" if="span" to="/myTree{toggledNode:target.node}"></p-u>
-            <span on-click="toggleSelectedNode"  select-node="[[item]]">
+            <span class="toggler" on-click="toggleSelectedNode"  select-node="[[item]]">
                 <mwc-checkbox checked="[[item.isSelected]]" indeterminate="[[item.isIndeterminate]]"></mwc-checkbox>
                 <xtal-split search="[[search]]" text-content="[[item.name]]"></xtal-split>
             </span>
