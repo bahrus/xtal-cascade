@@ -73,7 +73,12 @@ class XtalCascade extends XtallatX(HTMLElement) {
         this.onPropsChange();
     }
 
+    _toggledNodeSelection;
+    get toggledNodeSelection(){
+        return this._toggledNodeSelection;
+    }
     set toggledNodeSelection(tn: ITreeNode) {
+        this._toggledNodeSelection = tn;
         if (!this._isSelectedFn(tn)) {
             this.selectNodeAndCascade(tn);
         } else {

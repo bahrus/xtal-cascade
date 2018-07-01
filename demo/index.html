@@ -13,7 +13,7 @@
   </script>
   <script type="module" src="https://unpkg.com/@polymer/iron-list@3.0.0-pre.21/iron-list.js?module"></script>
   <script src="https://unpkg.com/xtal-splitting@0.0.1/xtal-splitting.js"></script>
-  <script src="https://unpkg.com/p-d.p-u@0.0.31/p-d.p-d-x.p-u.js"></script>
+  <script src="https://unpkg.com/p-d.p-u@0.0.32/p-d.p-d-x.p-u.js"></script>
   <script src="https://unpkg.com/xtal-fetch@0.0.35/xtal-fetch.js"></script>
 
   <script type="module" src="https://unpkg.com/xtal-tree@0.0.28/xtal-tree.js?module"></script>
@@ -107,7 +107,7 @@
       })
     </script>
     <p-d-x on="eval" to="{isSelectedFn:isSelectedFn;keyFn:keyFn;childrenFn:childrenFn;toggleIndeterminateFn:toggleIndeterminateFn;toggleNodeSelectionFn:toggleNodeSelectionFn;isIndeterminateFn:isIndeterminateFn}"></p-d-x>
-    <xtal-cascade></xtal-cascade>
+    <xtal-cascade id="myCascade"></xtal-cascade>
     <iron-list style="height:400px" id="nodeList" mutable-data p-d-if="#searchInput">
         <template>
           <div class="node"  style$="[[item.style]]"  p-d-if="#searchInput">
@@ -121,10 +121,11 @@
             <p-u on="click" if="span" to="/myTree{toggledNode:target.node}"></p-u>
             <!-- <xtal-split node="[[item]]"  search="[[search]]" text-content="[[item.name]]"></xtal-split> -->
             <p-u on="click" if="xtal-split" to="/myTree{toggledNode:target.node}"></p-u>
-            <span on-click="toggleSelectedNode" select-node="[[item]]">
+            <span on-click="toggleSelectedNode"  select-node="[[item]]">
                 <mwc-checkbox checked="[[item.isSelected]]" indeterminate="[[item.isIndeterminate]]"></mwc-checkbox>
                 <xtal-split search="[[search]]" text-content="[[item.name]]"></xtal-split>
             </span>
+            <p-u on="click" if="mwc-checkbox,xtal-split" to="/myCascade{toggledNodeSelection:target.parentElement.selectNode}"></p-u>
           </div>
         </template>
       </iron-list>
