@@ -6,60 +6,56 @@ View Model for a tree with selectable nodes
 ```
 <custom-element-demo>
   <template>
-    <div class="vertical-section-container centered">
+ <div class="vertical-section-container centered">
+    <style>
+      comment{
+        display:none;
+      }
+    </style>
     <h3>Basic xtal-cascade demo</h3>
+    <comment> Polyfill support for runt browsers </comment>
     <script src="https://unpkg.com/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-  <script type="module">
-    import "https://unpkg.com/@polymer/polymer@3.0.2/lib/elements/dom-if.js?module";
-  </script>
+    <comment> Polymer (non minified, uses bare import specifiers, which only works in Chrome thus far.  
+      This is just an example of a list generator which xtal-cascade can interface with.  / </comment>
+  <script type="module" src="https://unpkg.com/@polymer/polymer@3.0.2/lib/elements/dom-if.js?module"></script>
   <script type="module" src="https://unpkg.com/@polymer/iron-list@3.0.0-pre.21/iron-list.js?module"></script>
+  <comment> End Polymer refs  </comment>
   <script src="https://unpkg.com/xtal-splitting@0.0.1/xtal-splitting.js"></script>
-  <script src="https://unpkg.com/p-d.p-u@0.0.32/p-d.p-d-x.p-u.js"></script>
+  <script src="https://unpkg.com/p-d.p-u@0.0.35/p-d.p-d-x.p-u.js"></script>
   <script src="https://unpkg.com/xtal-fetch@0.0.35/xtal-fetch.js"></script>
 
   <script type="module" src="https://unpkg.com/xtal-tree@0.0.28/xtal-tree.js?module"></script>
   <script type="module" src="https://unpkg.com/xtal-cascade@0.0.2/xtal-cascade.js?module"></script>
   <script type="module" src="https://unpkg.com/@material/mwc-checkbox@0.1.2/mwc-checkbox.js?module"></script>
     <script>
-       var fvi = -1;
+      var fvi = -1;
       function levelSetter(nodes, level) {
         nodes.forEach(node => {
           node.style = 'margin-left:' + (level * 12) + 'px';
           if (node.children) levelSetter(node.children, level + 1)
         })
       }
-      function expandAll(e){
+    </script>
+
+    <comment>  ===================== Buttons / Search field ========================== </comment>
+    <button>Expand All</button>
+    <p-d on="click" to="{input:.}"></p-d>
+    <script type="module ish">
+      pd => {
+        if(!pd._input || !pd._input.type) return;
         myTree.allExpandedNodes = myTree.viewableNodes;
       }
-      function collapseAll(e){
+    </script>
+    <p-d  on="eval" to="{NA}"></p-d>
+    <button>Collapse All</button>
+    <p-d on="click" to="{input:.}"></p-d>
+    <script>
+      pd =>{
+        if(!pd._input || !pd._input.type) return;
         myTree.allCollapsedNodes = myTree.viewableNodes;
       }
-
     </script>
-    <style>
-      div.row {
-        cursor: pointer;
-        height:40px;
-        display:flex;
-        flex-direction: row;
-
-      }
-
-      span.match {
-        font-weight: bold;
-        background-color: yellowgreen;
-      }
-      span.expander{
-        margin-top:7px;
-      }
-      span.toggler{
-        display:flex;
-        flex-direction: row;
-        align-items: center;
-      }
-    </style>
-    <button onclick="expandAll()">Expand All</button>
-    <button onclick="collapseAll()">Collapse All</button>
+    <p-d  on="eval" to="{NA}"></p-d>
     <span>
       <button data-dir="asc">Sort Asc</button>
       <button data-dir="desc">Sort Desc</button>
@@ -68,8 +64,12 @@ View Model for a tree with selectable nodes
     <input type="text" placeholder="Search">
     <p-d id="searchInput" on="input" to="xtal-split{search}"></p-d>
     <p-d on="input" to="xtal-tree{searchString}" m="1"></p-d>
+
+    <comment>  ================== Retrieve sample json file that has a dump of a bower file directory  ============ </comment>
     <xtal-fetch fetch href="https://unpkg.com/xtal-tree@0.0.22/directory.json" as="json"></xtal-fetch>
     <p-d on="result-changed" to="xtal-tree,xtal-cascade{nodes}" m="2"></p-d>
+
+    <comment>  ================== Train xtal-tree how to intepret / manipulate the json data =====================================  </comment>
     <script type="module ish">
       ({
         childrenFn: node => node.children,
@@ -91,9 +91,29 @@ View Model for a tree with selectable nodes
       })
     </script>
     <p-d-x on="eval" to="{childrenFn:childrenFn;isOpenFn:isOpenFn;levelSetterFn:levelSetterFn;toggleNodeFn:toggleNodeFn;testNodeFn:testNodeFn;compareFn:compareFn}"></p-d-x>
-    <xtal-tree id="myTree"></xtal-tree>
+
+    <xtal-tree id="myTree" comment="Use xtal-tree view model component to provide snapshots of flat data to iron-list"></xtal-tree>
+   
     <p-d on="viewable-nodes-changed" to="iron-list{items};#viewNodesChangeHandler{input}"></p-d>
-    <p-d on="toggled-node-changed" to="#toggledNodeChangeHandler{input}"></p-d>
+    <p-d on="toggled-node-changed" to="{input:.}"></p-d>
+    <script type="module ish">
+      pd =>{
+        //Need to remember where the scrollbar was before toggling nodes open and shut
+        if(typeof(nodeList) === 'undefined') return;
+        fvi = nodeList.firstVisibleIndex;
+      }
+    </script>
+    <p-d  on="eval" to="{NA}"></p-d>
+    <script type="module ish">
+        inp => {
+          if(typeof(fvi) !== 'undefined' && fvi > -1){
+            nodeList.scrollToIndex(fvi);
+          }
+        }
+      </script>
+      <p-d id="viewNodesChangeHandler" on="eval" to="{NA}"></p-d>
+
+    <comment>  =============== Train xtal-cascade how to interpret / manipulate json data =============================   </comment>
     <script type="module ish">
       ({
         childrenFn: node => node.children,
@@ -109,8 +129,44 @@ View Model for a tree with selectable nodes
       })
     </script>
     <p-d-x on="eval" to="{isSelectedFn:isSelectedFn;keyFn:keyFn;childrenFn:childrenFn;toggleIndeterminateFn:toggleIndeterminateFn;toggleNodeSelectionFn:toggleNodeSelectionFn;isIndeterminateFn:isIndeterminateFn}"></p-d-x>
-    <xtal-cascade id="myCascade"></xtal-cascade>
-    <p-d on="selected-root-nodes-changed" to="#selectedNodeChangeHandler{input:target}" m="1"></p-d>
+    
+    <xtal-cascade id="myCascade" comment="Use xtal-cascade to manage node selection with checkboxes."></xtal-cascade>
+    <p-d on="selected-root-nodes-changed" to="{input:target}" m="1"></p-d>
+    <script type="module ish">
+        inp =>{
+          if((typeof(nodeList) === 'undefined') || !nodeList.items) return;
+            const idx = nodeList.firstVisibleIndex;
+            nodeList.items = nodeList.items.slice();
+            nodeList.scrollToIndex(idx);
+        }
+      </script>
+      <p-d id="selectedNodeChangeHandler" on="eval" to="{NA}"></p-d>
+
+    <comment>  Style the tree UI elements  </comment>
+    <style>
+        div.row {
+          cursor: pointer;
+          height:40px;
+          display:flex;
+          flex-direction: row;
+  
+        }
+  
+        span.match {
+          font-weight: bold;
+          background-color: yellowgreen;
+        }
+        span.expander{
+          margin-top:7px;
+        }
+        span.toggler{
+          display:flex;
+          flex-direction: row;
+          align-items: center;
+        }
+    </style>
+
+    <comment> Configure the flat list generator (iron-list)  </comment>
     <iron-list style="height:400px" id="nodeList" mutable-data p-d-if="#searchInput">
         <template>
           <div class="node"  style$="[[item.style]]"  p-d-if="#searchInput">
@@ -123,7 +179,7 @@ View Model for a tree with selectable nodes
                       <template is="dom-if" if="[[!item.children]]">📝</template>
                 </span>
                 <p-u on="click" if="span" to="/myTree{toggledNode:target.node}"></p-u>
-                <span class="toggler" on-click="toggleSelectedNode"  select-node="[[item]]" p-d-if="#searchInput">
+                <span class="toggler" select-node="[[item]]" p-d-if="#searchInput">
                     <mwc-checkbox checked="[[item.isSelected]]" indeterminate="[[item.isIndeterminate]]"></mwc-checkbox>
                     <xtal-split search="[[search]]" text-content="[[item.name]]"></xtal-split>
                 </span>
@@ -132,29 +188,8 @@ View Model for a tree with selectable nodes
           </div>
         </template>
       </iron-list>
-      <script type="module ish">
-        inp => {
-          if(typeof(fvi) !== 'undefined' && fvi > -1){
-            nodeList.scrollToIndex(fvi);
-          }
-        }
-      </script>
-      <p-d id="viewNodesChangeHandler" on="eval" to="{NA}"></p-d>
-      <script type="module ish">
-        inp =>{
-          fvi = nodeList.firstVisibleIndex;
-        }
-      </script>
-      <p-d id="toggledNodeChangeHandler" on="eval" to="{NA}"></p-d>
-      <script type="module ish">
-        inp =>{
-          if(!nodeList.items) return;
-            const idx = nodeList.firstVisibleIndex;
-            nodeList.items = nodeList.items.slice();
-            nodeList.scrollToIndex(idx);
-        }
-      </script>
-      <p-d id="selectedNodeChangeHandler" on="eval" to="{NA}"></p-d>
+
+
   </div>
     </template>
 </custom-element-demo>
