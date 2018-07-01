@@ -49,11 +49,17 @@
     <style>
       div.node {
         cursor: pointer;
+        display:flex;
+        flex-direction: row;
+        height:40px;
       }
 
       span.match {
         font-weight: bold;
         background-color: yellowgreen;
+      }
+      span.expander{
+        margin-top:7px;
       }
     </style>
     <button onclick="expandAll()">Expand All</button>
@@ -111,7 +117,7 @@
     <iron-list style="height:400px" id="nodeList" mutable-data p-d-if="#searchInput">
         <template>
           <div class="node"  style$="[[item.style]]"  p-d-if="#searchInput">
-            <span  node="[[item]]">
+            <span class="expander" node="[[item]]">
                 <template is="dom-if" if="[[item.children]]">
                     <template is="dom-if" if="[[item.expanded]]">📖</template>
                     <template is="dom-if" if="[[!item.expanded]]">📕</template>
@@ -119,8 +125,6 @@
                   <template is="dom-if" if="[[!item.children]]">📝</template>
             </span>
             <p-u on="click" if="span" to="/myTree{toggledNode:target.node}"></p-u>
-            <!-- <xtal-split node="[[item]]"  search="[[search]]" text-content="[[item.name]]"></xtal-split> -->
-            <p-u on="click" if="xtal-split" to="/myTree{toggledNode:target.node}"></p-u>
             <span on-click="toggleSelectedNode"  select-node="[[item]]">
                 <mwc-checkbox checked="[[item.isSelected]]" indeterminate="[[item.isIndeterminate]]"></mwc-checkbox>
                 <xtal-split search="[[search]]" text-content="[[item.name]]"></xtal-split>
