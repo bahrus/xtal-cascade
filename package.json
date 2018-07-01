@@ -1,6 +1,6 @@
 {
   "name": "xtal-cascade",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "View Model for a tree with selectable nodes",
   "main": "xtal-cascade.js",
   "repository": "https://github.com/bahrus/xtal-cascade",
