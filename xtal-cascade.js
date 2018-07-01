@@ -28,24 +28,28 @@ class XtalCascade extends XtallatX(HTMLElement) {
     }
     set isSelectedFn(nodeFn) {
         this._isSelectedFn = nodeFn;
+        this.onPropsChange();
     }
     get isIndeterminateFn() {
         return this._isIndeterminateFn;
     }
     set isIndeterminateFn(nodeFn) {
         this._isIndeterminateFn = nodeFn;
+        this.onPropsChange();
     }
     get toggleNodeSelectionFn() {
         return this._toggleNodeSelectionFn;
     }
     set toggleNodeSelectionFn(nodeFn) {
         this._toggleNodeSelectionFn = nodeFn;
+        this.onPropsChange();
     }
     get toggleIndeterminateFn() {
         return this._toggleInterminateFn;
     }
     set toggleIndeterminateFn(nodeFn) {
         this._toggleInterminateFn = nodeFn;
+        this.onPropsChange();
     }
     set toggledNodeSelection(tn) {
         if (!this._isSelectedFn(tn)) {
@@ -154,6 +158,7 @@ class XtalCascade extends XtallatX(HTMLElement) {
         this._childToParentLookup = {};
         this._selectedChildScore = {};
         this.createChildToParentLookup(this._nodes, this._childToParentLookup);
+        this.updateSelectedRootNodes();
     }
     createChildToParentLookup(nodes, lookup) {
         nodes.forEach(node => {
@@ -177,21 +182,15 @@ class XtalCascade extends XtallatX(HTMLElement) {
                 this.createChildToParentLookup(children, lookup);
             }
         });
-        this.updateSelectedRootNodes();
     }
     updateSelectedRootNodes() {
         this._selectedRootNodes = this._calculateSelectedRootNodes(this._nodes, []);
         this.notifySelectedRootNodesChanged();
     }
     notifySelectedRootNodesChanged() {
-        const newEvent = new CustomEvent('selected-root-nodes-changed', {
-            detail: {
-                value: this._selectedRootNodes
-            },
-            bubbles: true,
-            composed: true
+        this.de('selected-root-nodes', {
+            value: this._selectedRootNodes,
         });
-        this.dispatchEvent(newEvent);
     }
     _calculateSelectedRootNodes(nodes, acc) {
         nodes.forEach(node => {

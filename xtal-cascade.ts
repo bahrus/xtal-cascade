@@ -43,6 +43,7 @@ class XtalCascade extends XtallatX(HTMLElement) {
     }
     set isSelectedFn(nodeFn) {
         this._isSelectedFn = nodeFn;
+        this.onPropsChange();
     }
 
     _isIndeterminateFn: (tn: ITreeNode) => boolean;
@@ -51,6 +52,7 @@ class XtalCascade extends XtallatX(HTMLElement) {
     }
     set isIndeterminateFn(nodeFn) {
         this._isIndeterminateFn = nodeFn;
+        this.onPropsChange();
     }
 
     _toggleNodeSelectionFn: (tn: ITreeNode) => boolean;
@@ -59,6 +61,7 @@ class XtalCascade extends XtallatX(HTMLElement) {
     }
     set toggleNodeSelectionFn(nodeFn) {
         this._toggleNodeSelectionFn = nodeFn;
+        this.onPropsChange();
     }
 
     _toggleInterminateFn: (tn: ITreeNode) => void;
@@ -67,6 +70,7 @@ class XtalCascade extends XtallatX(HTMLElement) {
     }
     set toggleIndeterminateFn(nodeFn) {
         this._toggleInterminateFn = nodeFn;
+        this.onPropsChange();
     }
 
     set toggledNodeSelection(tn: ITreeNode) {
@@ -184,6 +188,7 @@ class XtalCascade extends XtallatX(HTMLElement) {
         this._childToParentLookup = {};
         this._selectedChildScore = {};
         this.createChildToParentLookup(this._nodes, this._childToParentLookup);
+        this.updateSelectedRootNodes();
     }
 
     createChildToParentLookup(nodes: ITreeNode[], lookup: { [key: string]: ITreeNode }) {
@@ -206,21 +211,16 @@ class XtalCascade extends XtallatX(HTMLElement) {
                 this.createChildToParentLookup(children, lookup);
             }
         })
-        this.updateSelectedRootNodes();
+        
     }
     updateSelectedRootNodes() {
         this._selectedRootNodes = this._calculateSelectedRootNodes(this._nodes, []);
         this.notifySelectedRootNodesChanged();
     }
     notifySelectedRootNodesChanged() {
-        const newEvent = new CustomEvent('selected-root-nodes-changed', {
-            detail: {
-                value: this._selectedRootNodes
-            },
-            bubbles: true,
-            composed: true
-        } as CustomEventInit);
-        this.dispatchEvent(newEvent);
+        this.de('selected-root-nodes',{
+            value: this._selectedRootNodes,
+        })
     }
     _calculateSelectedRootNodes(nodes: ITreeNode[], acc: ITreeNode[]) {
         nodes.forEach(node => {

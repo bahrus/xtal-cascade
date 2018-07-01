@@ -13,11 +13,13 @@
   </script>
   <script type="module" src="https://unpkg.com/@polymer/iron-list@3.0.0-pre.21/iron-list.js?module"></script>
   <script src="https://unpkg.com/xtal-splitting@0.0.1/xtal-splitting.js"></script>
-  <script src="https://unpkg.com/p-d.p-u@0.0.27/p-d.p-d-x.p-u.js"></script>
-  <script src="https://unpkg.com/xtal-fetch@0.0.34/xtal-fetch.js"></script>
+  <script src="https://unpkg.com/p-d.p-u@0.0.31/p-d.p-d-x.p-u.js"></script>
+  <script src="https://unpkg.com/xtal-fetch@0.0.35/xtal-fetch.js"></script>
 
   <script type="module" src="https://unpkg.com/xtal-tree@0.0.28/xtal-tree.js?module"></script>
-
+  <script type="module" src="../xtal-cascade.js"></script>
+  <!-- <script type="module" src="https://unpkg.com/@vaadin/vaadin-checkbox@2.2.0-alpha2/vaadin-checkbox.js?module"></script> -->
+  <script type="module" src="https://unpkg.com/@material/mwc-checkbox@0.1.2/mwc-checkbox.js?module"></script>
   <custom-style>
     <style is="custom-style" include="demo-pages-shared-styles">
     </style>
@@ -25,6 +27,7 @@
 </head>
 
 <body>
+    
   <div class="vertical-section-container centered">
     <h3>Basic xtal-tree demo</h3>
     <script>
@@ -55,24 +58,23 @@
     </style>
     <button onclick="expandAll()">Expand All</button>
     <button onclick="collapseAll()">Collapse All</button>
-    <button data-dir="asc">Sort Asc</button>
-    <p-d on="click" if="button" to="#myTree{sorted:target.dataset.dir}"></p-d>
-    <button data-dir="desc">Sort Desc</button>
-    <p-d on="click" if="button" to="#myTree{sorted:target.dataset.dir}"></p-d>
+    <span>
+      <button data-dir="asc">Sort Asc</button>
+      <button data-dir="desc">Sort Desc</button>
+    </span>
+    <p-d on="click" if="button" to="xtal-tree{sorted:target.dataset.dir}" m="1"></p-d>
     <input type="text" placeholder="Search">
-    <p-d id="searchProp" on="input" to="xtal-split{search}"></p-d>
-    <p-d on="input" to="#myTree{searchString}"></p-d>
+    <p-d id="searchInput" on="input" to="xtal-split{search}"></p-d>
+    <p-d on="input" to="xtal-tree{searchString}" m="1"></p-d>
     <xtal-fetch fetch href="directory.json" as="json"></xtal-fetch>
-    <p-d on="result-changed" to="#myTree{nodes}" m="1"></p-d>
+    <p-d on="result-changed" to="xtal-tree,xtal-cascade{nodes}" m="2"></p-d>
     <script type="module ish">
       ({
         childrenFn: node => node.children,
         isOpenFn: node => node.expanded,
         levelSetterFn: levelSetter,
         toggleNodeFn: node => {
-          
           node.expanded = !node.expanded;
-          
         },
         testNodeFn: (node, search) =>{
           if(!search) return true;
@@ -90,9 +92,25 @@
     <xtal-tree id="myTree"></xtal-tree>
     <p-d on="viewable-nodes-changed" to="iron-list{items};#viewNodesChangeHandler{input}"></p-d>
     <p-d on="toggled-node-changed" to="#toggledNodeChangeHandler{input}"></p-d>
-    <iron-list style="height:400px" id="nodeList" mutable-data p-d-if="#searchProp">
+    <script type="module ish">
+      ({
+        childrenFn: node => node.children,
+        keyFn: node => node.path,
+        toggleIndeterminateFn: node => {
+          node.isIndeterminate = !node.isIndeterminate;
+        },
+        toggleNodeSelectionFn: node =>{
+          node.isSelected = !node.isSelected;
+        },
+        isIndeterminateFn: node => node.isIndeterminate,
+        isSelectedFn: node => node.isSelected,
+      })
+    </script>
+    <p-d-x on="eval" to="{isSelectedFn:isSelectedFn;keyFn:keyFn;childrenFn:childrenFn;toggleIndeterminateFn:toggleIndeterminateFn;toggleNodeSelectionFn:toggleNodeSelectionFn;isIndeterminateFn:isIndeterminateFn}"></p-d-x>
+    <xtal-cascade></xtal-cascade>
+    <iron-list style="height:400px" id="nodeList" mutable-data p-d-if="#searchInput">
         <template>
-          <div class="node"  style$="[[item.style]]"  p-d-if="#searchProp">
+          <div class="node"  style$="[[item.style]]"  p-d-if="#searchInput">
             <span  node="[[item]]">
                 <template is="dom-if" if="[[item.children]]">
                     <template is="dom-if" if="[[item.expanded]]">📖</template>
@@ -101,8 +119,12 @@
                   <template is="dom-if" if="[[!item.children]]">📝</template>
             </span>
             <p-u on="click" if="span" to="/myTree{toggledNode:target.node}"></p-u>
-            <xtal-split node="[[item]]"  search="[[search]]" text-content="[[item.name]]"></xtal-split>
+            <!-- <xtal-split node="[[item]]"  search="[[search]]" text-content="[[item.name]]"></xtal-split> -->
             <p-u on="click" if="xtal-split" to="/myTree{toggledNode:target.node}"></p-u>
+            <span on-click="toggleSelectedNode" select-node="[[item]]">
+                <mwc-checkbox checked="[[item.isSelected]]" indeterminate="[[item.isIndeterminate]]"></mwc-checkbox>
+                <xtal-split search="[[search]]" text-content="[[item.name]]"></xtal-split>
+            </span>
           </div>
         </template>
       </iron-list>
@@ -121,10 +143,7 @@
       </script>
       <p-d id="toggledNodeChangeHandler" on="eval" to="{whoknows}"></p-d>
   </div>
-  <script>
-   
 
-  </script>
 </body>
 
 </html>
