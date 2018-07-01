@@ -156,8 +156,9 @@
       <script type="module ish">
         inp =>{
           if(!nodeList.items) return;
+            const idx = nodeList.firstVisibleIndex;
             nodeList.items = nodeList.items.slice();
-            nodeList.scrollToIndex(fvi);
+            nodeList.scrollToIndex(idx);
         }
       </script>
       <p-d id="selectedNodeChangeHandler" on="eval" to="{NA}"></p-d>
