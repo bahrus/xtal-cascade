@@ -14,13 +14,15 @@
     
   <div class="vertical-section-container centered">
     <h3>Basic xtal-cascade demo</h3>
+    <!-- Polyfill support for runt browsers -->
     <script src="https://unpkg.com/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <!-- Polymer (non minified / -->
   <script type="module">
     import "https://unpkg.com/@polymer/polymer@3.0.2/lib/elements/dom-if.js?module";
   </script>
   <script type="module" src="https://unpkg.com/@polymer/iron-list@3.0.0-pre.21/iron-list.js?module"></script>
   <script src="https://unpkg.com/xtal-splitting@0.0.1/xtal-splitting.js"></script>
-  <script src="https://unpkg.com/p-d.p-u@0.0.32/p-d.p-d-x.p-u.js"></script>
+  <script src="https://unpkg.com/p-d.p-u@0.0.35/p-d.p-d-x.p-u.js"></script>
   <script src="https://unpkg.com/xtal-fetch@0.0.35/xtal-fetch.js"></script>
 
   <script type="module" src="https://unpkg.com/xtal-tree@0.0.28/xtal-tree.js?module"></script>
@@ -34,38 +36,30 @@
           if (node.children) levelSetter(node.children, level + 1)
         })
       }
-      function expandAll(e){
-        myTree.allExpandedNodes = myTree.viewableNodes;
-      }
-      function collapseAll(e){
-        myTree.allCollapsedNodes = myTree.viewableNodes;
-      }
+
 
     </script>
-    <style>
-      div.row {
-        cursor: pointer;
-        height:40px;
-        display:flex;
-        flex-direction: row;
 
-      }
 
-      span.match {
-        font-weight: bold;
-        background-color: yellowgreen;
+    <button>Expand All</button>
+    <p-d on="click" to="{input:.}"></p-d>
+    <script type="module ish">
+      pd => {
+        
+        if(!pd._input || !pd._input.type) return;
+        myTree.allExpandedNodes = myTree.viewableNodes;
       }
-      span.expander{
-        margin-top:7px;
+    </script>
+    <p-d  on="eval" to="{NA}"></p-d>
+    <button>Collapse All</button>
+    <p-d on="click" to="{input:.}"></p-d>
+    <script>
+      pd =>{
+        if(!pd._input || !pd._input.type) return;
+        myTree.allCollapsedNodes = myTree.viewableNodes;
       }
-      span.toggler{
-        display:flex;
-        flex-direction: row;
-        align-items: center;
-      }
-    </style>
-    <button onclick="expandAll()">Expand All</button>
-    <button onclick="collapseAll()">Collapse All</button>
+    </script>
+    <p-d  on="eval" to="{NA}"></p-d>
     <span>
       <button data-dir="asc">Sort Asc</button>
       <button data-dir="desc">Sort Desc</button>
@@ -117,6 +111,28 @@
     <p-d-x on="eval" to="{isSelectedFn:isSelectedFn;keyFn:keyFn;childrenFn:childrenFn;toggleIndeterminateFn:toggleIndeterminateFn;toggleNodeSelectionFn:toggleNodeSelectionFn;isIndeterminateFn:isIndeterminateFn}"></p-d-x>
     <xtal-cascade id="myCascade"></xtal-cascade>
     <p-d on="selected-root-nodes-changed" to="#selectedNodeChangeHandler{input:target}" m="1"></p-d>
+    <style>
+        div.row {
+          cursor: pointer;
+          height:40px;
+          display:flex;
+          flex-direction: row;
+  
+        }
+  
+        span.match {
+          font-weight: bold;
+          background-color: yellowgreen;
+        }
+        span.expander{
+          margin-top:7px;
+        }
+        span.toggler{
+          display:flex;
+          flex-direction: row;
+          align-items: center;
+        }
+      </style>
     <iron-list style="height:400px" id="nodeList" mutable-data p-d-if="#searchInput">
         <template>
           <div class="node"  style$="[[item.style]]"  p-d-if="#searchInput">
