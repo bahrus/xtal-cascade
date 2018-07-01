@@ -13,7 +13,7 @@
 <body>
     
   <div class="vertical-section-container centered">
-    <h3>Basic xtal-tree demo</h3>
+    <h3>Basic xtal-cascade demo</h3>
     <script src="https://unpkg.com/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
   <script type="module">
     import "https://unpkg.com/@polymer/polymer@3.0.2/lib/elements/dom-if.js?module";
@@ -24,7 +24,7 @@
   <script src="https://unpkg.com/xtal-fetch@0.0.35/xtal-fetch.js"></script>
 
   <script type="module" src="https://unpkg.com/xtal-tree@0.0.28/xtal-tree.js?module"></script>
-  <script type="module" src="https://unpkg.com/xtal-cascade@0.0.2/xtal-cascade.js"></script>
+  <script type="module" src="https://unpkg.com/xtal-cascade@0.0.2/xtal-cascade.js?module"></script>
   <script type="module" src="https://unpkg.com/@material/mwc-checkbox@0.1.2/mwc-checkbox.js?module"></script>
     <script>
        var fvi = -1;
@@ -74,7 +74,7 @@
     <input type="text" placeholder="Search">
     <p-d id="searchInput" on="input" to="xtal-split{search}"></p-d>
     <p-d on="input" to="xtal-tree{searchString}" m="1"></p-d>
-    <xtal-fetch fetch href="directory.json" as="json"></xtal-fetch>
+    <xtal-fetch fetch href="https://unpkg.com/xtal-tree@0.0.22/directory.json" as="json"></xtal-fetch>
     <p-d on="result-changed" to="xtal-tree,xtal-cascade{nodes}" m="2"></p-d>
     <script type="module ish">
       ({
