@@ -137,7 +137,7 @@
     <p-d on="selected-root-nodes-changed" to="{input:target}" m="1"></p-d>
     <script type="module ish">
         inp =>{
-          if((typeof(nodeList) === 'undefined') || !nodeList.items) return;
+            if((typeof(nodeList) === 'undefined') || !nodeList.items) return;
             const idx = nodeList.firstVisibleIndex;
             nodeList.items = nodeList.items.slice();
             nodeList.scrollToIndex(idx);

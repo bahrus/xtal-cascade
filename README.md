@@ -6,14 +6,14 @@ View Model for a tree with selectable nodes
 ```
 <custom-element-demo>
   <template>
-   <div class="vertical-section-container centered">
+  <div class="vertical-section-container centered">
     <style>
       comment{
         display:none;
       }
     </style>
     <h3>Basic xtal-cascade demo</h3>
-    <comment> Web component polyfill  </comment>
+    <comment> Polyfill support for runt browsers </comment>
     <script src="https://unpkg.com/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
     <comment> Polymer (non minified, uses bare import specifiers, which only works in Chrome thus far.  
       This is just an example of a list generator which xtal-cascade can interface with.  / </comment>
@@ -39,17 +39,19 @@ View Model for a tree with selectable nodes
 
     <comment>  ===================== Buttons / Search field ========================== </comment>
     <button>Expand All</button>
-    <p-d  on="click" if="button" to="{input:.}"></p-d>
+    <p-d on="click" if="button" to="{input:.}"></p-d>
     <script type="module ish">
       pd => {
+        if(!pd._input || !pd._input.type) return;
         myTree.allExpandedNodes = myTree.viewableNodes;
       }
     </script>
-    <p-d  on="eval" to="{NA}"></p-d>
+    <p-d  on="eval" if="button" to="{NA}"></p-d>
     <button>Collapse All</button>
-    <p-d  on="click" if="button" to="{input:.}"></p-d>
+    <p-d on="click" to="{input:.}"></p-d>
     <script>
       pd =>{
+        if(!pd._input || !pd._input.type) return;
         myTree.allCollapsedNodes = myTree.viewableNodes;
       }
     </script>
@@ -104,7 +106,7 @@ View Model for a tree with selectable nodes
     <script type="module ish">
         inp => {
             nodeList.scrollToIndex(fvi);
-         }
+        }
       </script>
       <p-d id="viewNodesChangeHandler" on="eval" to="{NA}"></p-d>
 
@@ -123,14 +125,14 @@ View Model for a tree with selectable nodes
         isSelectedFn: node => node.isSelected,
       })
     </script>
-    <p-d-x on="eval" to="{isSelectedFn:isSelectedFn;keyFn:keyFn;childrenFn:childrenFn;toggleIndeterminateFn:toggleIndeterminateFn;toggleNodeSelectionFn:toggleNodeSelectionFn;isIndeterminateFn:isIndeterminateFn}"></p-d-x>
+    <p-d-x on="eval" to="{.:.}"></p-d-x>
     
     <xtal-cascade id="myCascade" comment="Use xtal-cascade to manage node selection with checkboxes."></xtal-cascade>
-    <p-d on="selected-root-nodes-changed" to="{input:target}"></p-d>
+    <p-d on="selected-root-nodes-changed" to="{input:target}" m="1"></p-d>
     <script type="module ish">
         inp =>{
+            if((typeof(nodeList) === 'undefined') || !nodeList.items) return;
             const idx = nodeList.firstVisibleIndex;
-            if(!idx) return;
             nodeList.items = nodeList.items.slice();
             nodeList.scrollToIndex(idx);
         }
