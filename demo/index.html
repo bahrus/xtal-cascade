@@ -45,14 +45,14 @@
 
     <comment>  ===================== Buttons / Search field ========================== </comment>
     <button>Expand All</button>
-    <p-d on="click" to="{input:.}"></p-d>
+    <p-d on="click" if="button" to="{input:.}"></p-d>
     <script type="module ish">
       pd => {
         if(!pd._input || !pd._input.type) return;
         myTree.allExpandedNodes = myTree.viewableNodes;
       }
     </script>
-    <p-d  on="eval" to="{NA}"></p-d>
+    <p-d  on="eval" if="button" to="{NA}"></p-d>
     <button>Collapse All</button>
     <p-d on="click" to="{input:.}"></p-d>
     <script>
