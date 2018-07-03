@@ -6,14 +6,14 @@ View Model for a tree with selectable nodes
 ```
 <custom-element-demo>
   <template>
- <div class="vertical-section-container centered">
+   <div class="vertical-section-container centered">
     <style>
       comment{
         display:none;
       }
     </style>
     <h3>Basic xtal-cascade demo</h3>
-    <comment> Polyfill support for runt browsers </comment>
+    <comment> Web component polyfill  </comment>
     <script src="https://unpkg.com/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
     <comment> Polymer (non minified, uses bare import specifiers, which only works in Chrome thus far.  
       This is just an example of a list generator which xtal-cascade can interface with.  / </comment>
@@ -21,7 +21,7 @@ View Model for a tree with selectable nodes
   <script type="module" src="https://unpkg.com/@polymer/iron-list@3.0.0-pre.21/iron-list.js?module"></script>
   <comment> End Polymer refs  </comment>
   <script src="https://unpkg.com/xtal-splitting@0.0.1/xtal-splitting.js"></script>
-  <script src="https://unpkg.com/p-d.p-u@0.0.35/p-d.p-d-x.p-u.js"></script>
+  <script src="https://unpkg.com/p-d.p-u@0.0.37/p-d.p-d-x.p-u.js"></script>
   <script src="https://unpkg.com/xtal-fetch@0.0.35/xtal-fetch.js"></script>
 
   <script type="module" src="https://unpkg.com/xtal-tree@0.0.28/xtal-tree.js?module"></script>
@@ -39,19 +39,17 @@ View Model for a tree with selectable nodes
 
     <comment>  ===================== Buttons / Search field ========================== </comment>
     <button>Expand All</button>
-    <p-d on="click" to="{input:.}"></p-d>
+    <p-d  on="click" if="button" to="{input:.}"></p-d>
     <script type="module ish">
       pd => {
-        if(!pd._input || !pd._input.type) return;
         myTree.allExpandedNodes = myTree.viewableNodes;
       }
     </script>
     <p-d  on="eval" to="{NA}"></p-d>
     <button>Collapse All</button>
-    <p-d on="click" to="{input:.}"></p-d>
+    <p-d  on="click" if="button" to="{input:.}"></p-d>
     <script>
       pd =>{
-        if(!pd._input || !pd._input.type) return;
         myTree.allCollapsedNodes = myTree.viewableNodes;
       }
     </script>
@@ -90,7 +88,7 @@ View Model for a tree with selectable nodes
         }
       })
     </script>
-    <p-d-x on="eval" to="{childrenFn:childrenFn;isOpenFn:isOpenFn;levelSetterFn:levelSetterFn;toggleNodeFn:toggleNodeFn;testNodeFn:testNodeFn;compareFn:compareFn}"></p-d-x>
+    <p-d-x on="eval" to="{.:.}"></p-d-x>
 
     <xtal-tree id="myTree" comment="Use xtal-tree view model component to provide snapshots of flat data to iron-list"></xtal-tree>
    
@@ -99,17 +97,14 @@ View Model for a tree with selectable nodes
     <script type="module ish">
       pd =>{
         //Need to remember where the scrollbar was before toggling nodes open and shut
-        if(typeof(nodeList) === 'undefined') return;
         fvi = nodeList.firstVisibleIndex;
       }
     </script>
     <p-d  on="eval" to="{NA}"></p-d>
     <script type="module ish">
         inp => {
-          if(typeof(fvi) !== 'undefined' && fvi > -1){
             nodeList.scrollToIndex(fvi);
-          }
-        }
+         }
       </script>
       <p-d id="viewNodesChangeHandler" on="eval" to="{NA}"></p-d>
 
@@ -131,11 +126,11 @@ View Model for a tree with selectable nodes
     <p-d-x on="eval" to="{isSelectedFn:isSelectedFn;keyFn:keyFn;childrenFn:childrenFn;toggleIndeterminateFn:toggleIndeterminateFn;toggleNodeSelectionFn:toggleNodeSelectionFn;isIndeterminateFn:isIndeterminateFn}"></p-d-x>
     
     <xtal-cascade id="myCascade" comment="Use xtal-cascade to manage node selection with checkboxes."></xtal-cascade>
-    <p-d on="selected-root-nodes-changed" to="{input:target}" m="1"></p-d>
+    <p-d on="selected-root-nodes-changed" to="{input:target}"></p-d>
     <script type="module ish">
         inp =>{
-          if((typeof(nodeList) === 'undefined') || !nodeList.items) return;
             const idx = nodeList.firstVisibleIndex;
+            if(!idx) return;
             nodeList.items = nodeList.items.slice();
             nodeList.scrollToIndex(idx);
         }
