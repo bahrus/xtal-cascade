@@ -13,7 +13,7 @@ View Model for a tree with selectable nodes
       }
     </style>
     <h3>Basic xtal-cascade demo</h3>
-    <comment> Polyfill support for runt browsers </comment>
+    <comment> Polyfill support for retro browsers </comment>
     <script src="https://unpkg.com/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
     <comment> Polymer (non minified, uses bare import specifiers, which only works in Chrome thus far.  
       This is just an example of a list generator which xtal-cascade can interface with.  / </comment>
@@ -46,7 +46,8 @@ View Model for a tree with selectable nodes
         myTree.allExpandedNodes = myTree.viewableNodes;
       }
     </script>
-    <p-d  on="eval" if="button" to="{NA}"></p-d>
+    <p-d comment="handleExpandAll"  on="eval" if="button" to="{NA}"></p-d>
+
     <button>Collapse All</button>
     <p-d on="click" to="{input:.}"></p-d>
     <script>
@@ -55,7 +56,9 @@ View Model for a tree with selectable nodes
         myTree.allCollapsedNodes = myTree.viewableNodes;
       }
     </script>
-    <p-d  on="eval" to="{NA}"></p-d>
+    <p-d comment="handleCollapseAll" on="eval" to="{NA}"></p-d>
+    
+    <comment> Sort Buttons </comment>
     <span>
       <button data-dir="asc">Sort Asc</button>
       <button data-dir="desc">Sort Desc</button>
@@ -91,7 +94,6 @@ View Model for a tree with selectable nodes
       })
     </script>
     <p-d-x on="eval" to="{.:.}"></p-d-x>
-
     <xtal-tree id="myTree" comment="Use xtal-tree view model component to provide snapshots of flat data to iron-list"></xtal-tree>
    
     <p-d on="viewable-nodes-changed" to="iron-list{items};#viewNodesChangeHandler{input}"></p-d>
@@ -102,10 +104,10 @@ View Model for a tree with selectable nodes
         fvi = nodeList.firstVisibleIndex;
       }
     </script>
-    <p-d  on="eval" to="{NA}"></p-d>
+    <p-d comment="handle Toggle node change" on="eval" to="{NA}"></p-d>
     <script type="module ish">
         inp => {
-            nodeList.scrollToIndex(fvi);
+            if(nodeList && fvi > -1) nodeList.scrollToIndex(fvi);
         }
       </script>
       <p-d id="viewNodesChangeHandler" on="eval" to="{NA}"></p-d>

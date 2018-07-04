@@ -145,7 +145,7 @@
       <script type="module ish">
         inp => {
           if(typeof(fvi) !== 'undefined' && fvi > -1){
-            nodeList.scrollToIndex(fvi);
+            if (nodeList && fvi > -1) nodeList.scrollToIndex(fvi);
           }
         }
       </script>
