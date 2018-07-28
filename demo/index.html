@@ -27,7 +27,7 @@
   <script type="module" src="https://unpkg.com/@polymer/iron-list@3.0.0-pre.21/iron-list.js?module"></script>
   <comment> End Polymer refs  </comment>
   <script src="https://unpkg.com/xtal-splitting@0.0.1/xtal-splitting.js"></script>
-  <script src="https://unpkg.com/p-d.p-u@0.0.37/p-d.p-d-x.p-u.js"></script>
+  <script src="https://unpkg.com/p-d.p-u@0.0.50/p-d.p-d-x.p-u.js"></script>
   <script src="https://unpkg.com/xtal-fetch@0.0.35/xtal-fetch.js"></script>
 
   <script type="module" src="https://unpkg.com/xtal-tree@0.0.28/xtal-tree.js?module"></script>
@@ -42,6 +42,7 @@
         })
       }
     </script>
+
 
     <comment>  ===================== Buttons / Search field ========================== </comment>
     <button>Expand All</button>
@@ -79,7 +80,7 @@
     <p-d on="result-changed" to="xtal-tree,xtal-cascade{nodes}" m="2"></p-d>
 
     <comment>  ================== Train xtal-tree how to intepret / manipulate the json data =====================================  </comment>
-    <script type="module ish">
+    <script nomodule>
       ({
         childrenFn: node => node.children,
         isOpenFn: node => node.expanded,
@@ -104,14 +105,14 @@
    
     <p-d on="viewable-nodes-changed" to="iron-list{items};#viewNodesChangeHandler{input}"></p-d>
     <p-d on="toggled-node-changed" to="{input:.}"></p-d>
-    <script type="module ish">
+    <script nomodule>
       pd =>{
         //Need to remember where the scrollbar was before toggling nodes open and shut
         fvi = nodeList.firstVisibleIndex;
       }
     </script>
     <p-d comment="handle Toggle node change" on="eval" to="{NA}"></p-d>
-    <script type="module ish">
+    <script nomodule>
         inp => {
             if(nodeList && fvi > -1) nodeList.scrollToIndex(fvi);
         }
@@ -137,16 +138,15 @@
     
     <xtal-cascade id="myCascade" comment="Use xtal-cascade to manage node selection with checkboxes."></xtal-cascade>
     <p-d on="selected-root-nodes-changed" to="{input:target}" m="1"></p-d>
-    <script type="module ish">
-        inp =>{
+    <script>
+      customElements.whenDefined('p-d-x').then(() =>{customElements.get('p-d-x').define('selected-node-change-handler', () =>{
             if((typeof(nodeList) === 'undefined') || !nodeList.items) return;
             const idx = nodeList.firstVisibleIndex;
             nodeList.items = nodeList.items.slice();
             nodeList.scrollToIndex(idx);
-        }
-      </script>
-      <p-d id="selectedNodeChangeHandler" on="eval" to="{NA}"></p-d>
-
+      })})
+    </script>
+    <selected-node-change-handler></selected-node-change-handler>
     <comment>  Style the tree UI elements  </comment>
     <style>
         div.row {
