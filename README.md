@@ -33,12 +33,16 @@ View Model for a tree with selectable nodes
     </script>
     <script type="module">
         import {PDQ} from 'https://unpkg.com/p-d.p-u@0.0.56/PDQ.js?module';
-        PDQ.define('selected-nodes-change-action', () => {
+        PDQ.define('selected-nodes-change-action', t => {
           if ((typeof (nodeList) === 'undefined') || !nodeList.items) return;
           //Restore scroll position
           const idx = nodeList.firstVisibleIndex;
           nodeList.items = nodeList.items.slice();
-          nodeList.scrollToIndex(idx);
+          //nodeList.scrollToIndex(idx);
+          setTimeout(() =>{
+              nodeList.scrollToIndex(idx);
+          }, 1);
+          return nodeList.items.slice();
         })
         PDQ.define('view-nodes-action', () =>{
           //Restore scroll position
@@ -137,6 +141,7 @@ View Model for a tree with selectable nodes
     <xtal-cascade id="myCascade"></xtal-cascade>
     <p-d on="selected-root-nodes-changed" to="{input:target}" m="1"></p-d>
     <selected-nodes-change-action></selected-nodes-change-action>
+    <p-d on="value-changed" to="iron-list{items}"></p-d>
     <!-- =============== Style the tree UI elements -->
     <style>
       div.row {
