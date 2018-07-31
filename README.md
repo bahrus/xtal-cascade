@@ -6,7 +6,7 @@ View Model for a tree with selectable nodes
 ```
 <custom-element-demo>
   <template>
-    <div>
+  <div>
     <h3>Basic xtal-cascade demo</h3>
     <!--Polyfill support for retro browsers -->
     <script src="https://unpkg.com/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
@@ -33,7 +33,7 @@ View Model for a tree with selectable nodes
     </script>
     <script type="module">
         import {PDQ} from 'https://unpkg.com/p-d.p-u@0.0.56/PDQ.js?module';
-        PDQ.define('selected-node-change-action', () => {
+        PDQ.define('selected-nodes-change-action', () => {
           if ((typeof (nodeList) === 'undefined') || !nodeList.items) return;
           //Restore scroll position
           const idx = nodeList.firstVisibleIndex;
@@ -118,7 +118,7 @@ View Model for a tree with selectable nodes
 
 
     <!-- =============== Train xtal-cascade how to interpret / manipulate json data ============================= -->
-    <script type="module ish">
+    <script nomodule>
       ({
         childrenFn: node => node.children,
         keyFn: node => node.path,
