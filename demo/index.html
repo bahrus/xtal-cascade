@@ -12,12 +12,7 @@
 
 <body>
 
-  <div class="vertical-section-container centered">
-    <style>
-      comment {
-        display: none;
-      }
-    </style>
+  <div>
     <h3>Basic xtal-cascade demo</h3>
     <!--Polyfill support for retro browsers -->
     <script src="https://unpkg.com/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
@@ -53,7 +48,13 @@
         })
         PDQ.define('view-nodes-action', () =>{
           //Restore scroll position
-          if (nodeList && fvi > -1) nodeList.scrollToIndex(fvi);
+          //Not sure why delay is needed now
+          if (nodeList && fvi > -1) {
+            setTimeout(() =>{
+              nodeList.scrollToIndex(fvi);
+            }, 1)
+            
+          }
         }) 
         PDQ.define('toggled-node-action', () =>{
           //Need to remember where the scrollbar was before toggling nodes open and shut
@@ -69,7 +70,7 @@
         })
     </script>
 
-    <!-- Buttons / Search field ========================== -->
+    <!-- ================== Buttons / Search field ========================== -->
     <button>Expand All</button>
     <p-d on="click" if="button" to="{input:.}"></p-d>
     <expand-all-action></expand-all-action>
@@ -77,7 +78,7 @@
     <p-d on="click" to="{input:.}"></p-d>
     <collapse-all-action></collapse-all-action>
 
-    <comment> Sort Buttons </comment>
+    <!-- =================== Sort Buttons ================================= -->
     <span>
       <button data-dir="asc">Sort Asc</button>
       <button data-dir="desc">Sort Desc</button>
@@ -138,14 +139,11 @@
       })
     </script>
     <p-d-x on="eval" to="{.:.}"></p-d-x>
-
-    <xtal-cascade id="myCascade" comment="Use xtal-cascade to manage node selection with checkboxes."></xtal-cascade>
+    <!--  ============== Use xtal-cascade to manage node selection with checkboxes. ============= -->
+    <xtal-cascade id="myCascade"></xtal-cascade>
     <p-d on="selected-root-nodes-changed" to="{input:target}" m="1"></p-d>
-    <script type="module">
-
-    </script>
-    <selected-node-change-handler></selected-node-change-handler>
-    <comment> Style the tree UI elements </comment>
+    <selected-nodes-change-action></selected-nodes-change-action>
+    <!-- =============== Style the tree UI elements -->
     <style>
       div.row {
         cursor: pointer;
@@ -171,7 +169,7 @@
       }
     </style>
 
-    <comment> Configure the flat list generator (iron-list) </comment>
+    <!-- =================== Configure the flat list generator (iron-list) -->
     <iron-list style="height:400px" id="nodeList" mutable-data p-d-if="#searchInput">
       <template>
         <div class="node" style$="[[item.style]]" p-d-if="#searchInput">
