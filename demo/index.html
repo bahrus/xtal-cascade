@@ -14,30 +14,26 @@
 
   <div>
     <h3>Basic xtal-cascade demo</h3>
-    <!--Polyfill support for retro browsers -->
+    <!--Polyfill support for re(dge)tro browsers -->
     <script src="https://unpkg.com/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-    <!--Polymer (non minified, uses bare import specifiers, which only works in Chrome thus far. This is just an example of a
+    <!--Polymer (non minified, uses bare import specifiers, which only works in Chrome and Firefox Nightly thus far. This is just an example of a
       list generator which xtal-cascade can interface with. -->
     <script type="module" src="https://unpkg.com/@polymer/polymer@3.0.5/lib/elements/dom-if.js?module"></script>
     <script type="module" src="https://unpkg.com/@polymer/iron-list@3.0.0-pre.21/iron-list.js?module"></script>
     <!-- End Polymer refs -->
-    <script src="https://unpkg.com/xtal-splitting@0.0.1/xtal-splitting.js"></script>
-    <script src="https://unpkg.com/p-d.p-u@0.0.56/p-all.iife.js"></script>
-    <script src="https://unpkg.com/xtal-fetch@0.0.35/xtal-fetch.js"></script>
+    <script type="module" src="https://unpkg.com/xtal-splitting@0.0.8/xtal-splitting.js"></script>
+    <script src="https://unpkg.com/p-d.p-u@0.0.67/p-all.iife.js"></script>
+    <script src="https://unpkg.com/xtal-fetch@0.0.40/xtal-fetch.js"></script>
 
-    <script type="module" src="https://unpkg.com/xtal-tree@0.0.28/xtal-tree.js?module"></script>
+    <script type="module" src="https://unpkg.com/xtal-tree@0.0.40/xtal-tree.js?module"></script>
+    <script src="https://unpkg.com/xtal-decorator@0.0.20/xtal-decorator.iife.js"></script>
     <script type="module" src="https://unpkg.com/xtal-cascade@0.0.2/xtal-cascade.js?module"></script>
     <script type="module" src="https://unpkg.com/@material/mwc-checkbox@0.1.2/mwc-checkbox.js?module"></script>
     <script>
-      var fvi = -1;
-      function levelSetter(nodes, level) {
-        nodes.forEach(node => {
-          node.style = 'margin-left:' + (level * 12) + 'px';
-          if (node.children) levelSetter(node.children, level + 1)
-        })
-      }
+      var firstVisibleIndex = -1;
     </script>
     <script type="module">
+        //define a bunch of small pipe custom elements
         import {PDQ} from 'https://unpkg.com/p-d.p-u@0.0.56/PDQ.js?module';
         PDQ.define('selected-nodes-change-action', t => {
           if ((typeof (nodeList) === 'undefined') || !nodeList.items) return;
@@ -53,16 +49,16 @@
         PDQ.define('view-nodes-action', () =>{
           //Restore scroll position
           //Not sure why delay is needed now
-          if (nodeList && fvi > -1) {
+          if (nodeList && firstVisibleIndex > -1) {
             setTimeout(() =>{
-              nodeList.scrollToIndex(fvi);
+              nodeList.scrollToIndex(firstVisibleIndex);
             }, 1)
             
           }
         }) 
         PDQ.define('toggled-node-action', () =>{
           //Need to remember where the scrollbar was before toggling nodes open and shut
-          fvi = nodeList.firstVisibleIndex;
+          firstVisibleIndex = nodeList.firstVisibleIndex;
         })
         PDQ.define('expand-all-action', input =>{
           if(!input || !input.type) return;
@@ -97,11 +93,17 @@
     <p-d on="result-changed" to="xtal-tree,xtal-cascade{nodes}" m="2"></p-d>
 
     <!-- ================== Train xtal-tree how to intepret / manipulate the json data ===================================== -->
+    <xtal-deco>
     <script nomodule>
       ({
         childrenFn: node => node.children,
         isOpenFn: node => node.expanded,
-        levelSetterFn: levelSetter,
+        levelSetterFn: function (nodes, level) {
+          nodes.forEach(node => {
+            node.style = 'margin-left:' + (level * 12) + 'px';
+            if (node.children) this.levelSetterFn(node.children, level + 1)
+          })
+        },
         toggleNodeFn: node => {
           node.expanded = !node.expanded;
         },
@@ -117,7 +119,7 @@
         }
       })
     </script>
-    <p-d-x on="eval" to="{.:.}"></p-d-x>
+    </xtal-deco>
     <!-- Use xtal-tree view model component to provide snapshots of flat data to iron-list -->
     <xtal-tree id="myTree" ></xtal-tree>
     <p-d on="toggled-node-changed" to="toggled-node-action{input:.}"></p-d>
