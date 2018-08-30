@@ -130,6 +130,7 @@
 
 
     <!-- =============== Train xtal-cascade how to interpret / manipulate json data ============================= -->
+    <xtal-deco>
     <script nomodule>
       ({
         childrenFn: node => node.children,
@@ -144,7 +145,7 @@
         isSelectedFn: node => node.isSelected,
       })
     </script>
-    <p-d-x on="eval" to="{.:.}"></p-d-x>
+    </xtal-deco>
     <!--  ============== Use xtal-cascade to manage node selection with checkboxes. ============= -->
     <xtal-cascade id="myCascade"></xtal-cascade>
     <p-d on="selected-root-nodes-changed" to="{input:target}" m="1"></p-d>
