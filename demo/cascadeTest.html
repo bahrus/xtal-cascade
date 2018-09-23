@@ -14,36 +14,35 @@
 
   <div>
     <xtal-state-watch watch level="local"></xtal-state-watch>
-    <p-d on="history-changed" to="#handleViewableNodesChanged{firstVisibleIndex:target.history};#selectedRootNodesChangedHandler{firstVisibleIndex:target.history}"
-      m="1"></p-d>
+    <p-d on="history-changed" to="#handleViewableNodesChanged{firstVisibleIndex:target.history}" m="1"></p-d>
     <h3>Basic xtal-cascade demo</h3>
-
+    
     <script>
       var firstVisibleIndex = -1;
     </script>
     <script type="module">
-      //define a bunch of small pipe custom elements
-      import { PDQ } from 'https://unpkg.com/p-d.p-u@0.0.56/PDQ.js?module';
-      // PDQ.define('selected-nodes-change-action', t => {
-      //   if ((typeof (nodeList) === 'undefined') || !nodeList.items) return;
-      //   //Restore scroll position
-      //   const idx = nodeList.firstVisibleIndex;
-      //   nodeList.items = nodeList.items.slice();
-      //   //nodeList.scrollToIndex(idx);
-      //   setTimeout(() =>{
-      //       nodeList.scrollToIndex(idx);
-      //   }, 1);
-      //   return nodeList.items.slice();
-      // })
-
-      PDQ.define('expand-all-action', input => {
-        if (!input || !input.type) return;
-        myTree.allExpandedNodes = myTree.viewableNodes;
-      })
-      PDQ.define('collapse-all-action', input => {
-        if (!input || !input.type) return;
-        myTree.allCollapsedNodes = myTree.viewableNodes;
-      })
+        //define a bunch of small pipe custom elements
+        import {PDQ} from 'https://unpkg.com/p-d.p-u@0.0.56/PDQ.js?module';
+        PDQ.define('selected-nodes-change-action', t => {
+          if ((typeof (nodeList) === 'undefined') || !nodeList.items) return;
+          //Restore scroll position
+          const idx = nodeList.firstVisibleIndex;
+          nodeList.items = nodeList.items.slice();
+          //nodeList.scrollToIndex(idx);
+          setTimeout(() =>{
+              nodeList.scrollToIndex(idx);
+          }, 1);
+          return nodeList.items.slice();
+        })
+        
+        PDQ.define('expand-all-action', input =>{
+          if(!input || !input.type) return;
+          myTree.allExpandedNodes = myTree.viewableNodes;
+        })
+        PDQ.define('collapse-all-action', input =>{
+          if(!input || !input.type) return;
+          myTree.allCollapsedNodes = myTree.viewableNodes;
+        })
     </script>
 
     <!-- ================== Buttons / Search field ========================== -->
@@ -70,69 +69,70 @@
 
     <!-- ================== Train xtal-tree how to intepret / manipulate the json data ===================================== -->
     <xtal-deco>
-      <script nomodule>
-          ({
-            childrenFn: node => node.children,
-            isOpenFn: node => node.expanded,
-            levelSetterFn: function (nodes, level) {
-              nodes.forEach(node => {
-                node.style = 'margin-left:' + (level * 12) + 'px';
-                if (node.children) this.levelSetterFn(node.children, level + 1)
-              })
-            },
-            toggleNodeFn: node => {
-              node.expanded = !node.expanded;
-            },
-            testNodeFn: (node, search) => {
-              if (!search) return true;
-              if (!node.nameLC) node.nameLC = node.name.toLowerCase();
-              return node.nameLC.indexOf(search.toLowerCase()) > -1;
-            },
-            compareFn: (lhs, rhs) => {
-              if (lhs.name < rhs.name) return -1;
-              if (lhs.name > rhs.name) return 1;
-              return 0;
-            }
+    <script nomodule>
+      ({
+        childrenFn: node => node.children,
+        isOpenFn: node => node.expanded,
+        levelSetterFn: function (nodes, level) {
+          nodes.forEach(node => {
+            node.style = 'margin-left:' + (level * 12) + 'px';
+            if (node.children) this.levelSetterFn(node.children, level + 1)
           })
-      </script>
+        },
+        toggleNodeFn: node => {
+          node.expanded = !node.expanded;
+        },
+        testNodeFn: (node, search) => {
+          if (!search) return true;
+          if (!node.nameLC) node.nameLC = node.name.toLowerCase();
+          return node.nameLC.indexOf(search.toLowerCase()) > -1;
+        },
+        compareFn: (lhs, rhs) => {
+          if (lhs.name < rhs.name) return -1;
+          if (lhs.name > rhs.name) return 1;
+          return 0;
+        }
+      })
+    </script>
     </xtal-deco>
     <!-- Use xtal-tree view model component to provide snapshots of flat data to iron-list -->
-    <xtal-tree id="myTree"></xtal-tree>
+    <xtal-tree id="myTree" ></xtal-tree>
     <p-d on="viewable-nodes-changed" to="iron-list{items}"></p-d>
     <p-d on="viewable-nodes-changed" to="#handleViewableNodesChanged{nodes}" skip-init m="1"></p-d>
     <!-- <toggled-node-action></toggled-node-action> -->
-    <aggregator-fn id="handleViewableNodesChanged">
-      <script nomodule>
-          ({ nodes, __this }) => {
-          setTimeout(() => {
-            console.log('scrolling to ' + __this.firstVisibleIndex);
-            nodeList.scrollToIndex(__this.firstVisibleIndex);
+    <aggregator-fn id="handleViewableNodesChanged"><script nomodule>
+      ({nodes, __this}) => {
+          console.log('fvi:' + __this.firstVisibleIndex);
+          const oldFVI = firstVisibleIndex;
+          setTimeout(() =>{
+            console.log('scrolling to ' + oldFVI);
+            nodeList.scrollToIndex(oldFVI);
           }, 1)
-        }
-      </script>
-    </aggregator-fn>
+      }
+    </script></aggregator-fn>
 
     <!-- =============== Train xtal-cascade how to interpret / manipulate json data ============================= -->
     <xtal-deco>
-      <script nomodule>
-        ({
-          childrenFn: node => node.children,
-          keyFn: node => node.path,
-          toggleIndeterminateFn: node => {
-            node.isIndeterminate = !node.isIndeterminate;
-          },
-          toggleNodeSelectionFn: node => {
-            node.isSelected = !node.isSelected;
-          },
-          isIndeterminateFn: node => node.isIndeterminate,
-          isSelectedFn: node => node.isSelected,
-        })
-      </script>
+    <script nomodule>
+      ({
+        childrenFn: node => node.children,
+        keyFn: node => node.path,
+        toggleIndeterminateFn: node => {
+          node.isIndeterminate = !node.isIndeterminate;
+        },
+        toggleNodeSelectionFn: node =>{
+          node.isSelected = !node.isSelected;
+        },
+        isIndeterminateFn: node => node.isIndeterminate,
+        isSelectedFn: node => node.isSelected,
+      })
+    </script>
     </xtal-deco>
     <!--  ============== Use xtal-cascade to manage node selection with checkboxes. ============= -->
     <xtal-cascade id="myCascade"></xtal-cascade>
-    <p-d on="selected-root-nodes-changed" to="iron-list{hasNewNodeSelection:target.id}" m="1"></p-d>
-
+    <p-d on="selected-root-nodes-changed" to="{input:target}" m="1"></p-d>
+    <selected-nodes-change-action></selected-nodes-change-action>
+    <p-d on="value-changed" to="iron-list{items}"></p-d>
     <!-- =============== Style the tree UI elements -->
     <style>
       div.row {
@@ -160,29 +160,6 @@
     </style>
 
     <!-- =================== Configure the flat list generator (iron-list) -->
-    <xtal-deco>
-      <script nomodule>
-        ({
-          props: {
-            hasNewNodeSelection: false
-          },
-          onPropsChange: function (name, newVal) {
-            console.log('iah');
-            switch (name) {
-              case 'hasNewNodeSelection':
-                if(!this.items) return;
-                const idx = this.firstVisibleIndex;
-                this.items = this.items.slice();
-                //nodeList.scrollToIndex(idx);
-                setTimeout(() => {
-                  this.scrollToIndex(idx);
-                }, 1);
-                return this.items.slice();
-            }
-          }
-        })
-      </script>
-    </xtal-deco>
     <iron-list style="height:400px" id="nodeList" mutable-data p-d-if="#searchInput">
       <template>
         <div class="node" style$="[[item.style]]" p-d-if="#searchInput">
@@ -205,14 +182,13 @@
       </template>
     </iron-list>
     <p-d on="scroll" to="{ironList:target}"></p-d>
-    <aggregator-fn>
-      <script nomodule>
-          ({ ironList }) => {
-          firstVisibleIndex = ironList.firstVisibleIndex;
-          return firstVisibleIndex;
-        }
-      </script>
-    </aggregator-fn>
+    <aggregator-fn><script nomodule>
+      ({ironList}) => {
+        firstVisibleIndex = ironList.firstVisibleIndex;
+        console.log('firstvisibleIndex = ' + firstVisibleIndex);
+        return firstVisibleIndex;
+      }
+    </script></aggregator-fn>
     <p-d on="value-changed" to="{history}"></p-d>
     <xtal-state-commit level="local" rewrite href="/scroll"></xtal-state-commit>
     <!--Polyfill support for re(dge)tro browsers -->
@@ -231,7 +207,7 @@
     <script type="module" src="https://unpkg.com/xtal-cascade@0.0.2/xtal-cascade.js?module"></script>
     <script type="module" src="https://unpkg.com/@material/mwc-checkbox@0.1.2/mwc-checkbox.js?module"></script>
     <script type="module" src="https://unpkg.com/aggregator-fn@0.0.10/aggregator-fn.iife.js"></script>
-    <script type="module" src="https://unpkg.com/xtal-state@0.0.13/xtal-state.js"></script>
+    <script type="module" src="https://unpkg.com/xtal-state@0.0.12/xtal-state.js"></script>
   </div>
 
 </body>
