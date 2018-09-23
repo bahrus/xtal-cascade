@@ -184,9 +184,11 @@
       ({ironList}) => {
         firstVisibleIndex = ironList.firstVisibleIndex;
         console.log('firstvisibleIndex = ' + firstVisibleIndex);
+        return firstVisibleIndex;
       }
     </script></aggregator-fn>
-    
+    <p-d on="value-changed" to="{history}"></p-d>
+    <xtal-state-commit level="local" rewrite href="/scroll"></xtal-state-commit>
     <!--Polyfill support for re(dge)tro browsers -->
     <script src="https://unpkg.com/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
     <!--Polymer (non minified, uses bare import specifiers, which only works in Chrome and Firefox Nightly thus far. This is just an example of a
