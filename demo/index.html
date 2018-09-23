@@ -13,22 +13,9 @@
 <body>
 
   <div>
+    <xtal-state-watch level="local"></xtal-state-watch>
     <h3>Basic xtal-cascade demo</h3>
-    <!--Polyfill support for re(dge)tro browsers -->
-    <script src="https://unpkg.com/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-    <!--Polymer (non minified, uses bare import specifiers, which only works in Chrome and Firefox Nightly thus far. This is just an example of a
-      list generator which xtal-cascade can interface with. -->
-    <script type="module" src="https://unpkg.com/@polymer/polymer@3.0.5/lib/elements/dom-if.js?module"></script>
-    <script type="module" src="https://unpkg.com/@polymer/iron-list@3.0.0-pre.21/iron-list.js?module"></script>
-    <!-- End Polymer refs -->
-    <script type="module" src="https://unpkg.com/xtal-splitting@0.0.8/xtal-splitting.js"></script>
-    <script src="https://unpkg.com/p-d.p-u@0.0.67/p-all.iife.js"></script>
-    <script src="https://unpkg.com/xtal-fetch@0.0.40/xtal-fetch.js"></script>
-
-    <script type="module" src="https://unpkg.com/xtal-tree@0.0.40/xtal-tree.js?module"></script>
-    <script src="https://unpkg.com/xtal-decorator@0.0.20/xtal-decorator.iife.js"></script>
-    <script type="module" src="https://unpkg.com/xtal-cascade@0.0.2/xtal-cascade.js?module"></script>
-    <script type="module" src="https://unpkg.com/@material/mwc-checkbox@0.1.2/mwc-checkbox.js?module"></script>
+    
     <script>
       var firstVisibleIndex = -1;
     </script>
@@ -46,20 +33,7 @@
           }, 1);
           return nodeList.items.slice();
         })
-        PDQ.define('view-nodes-action', () =>{
-          //Restore scroll position
-          //Not sure why delay is needed now
-          if (nodeList && firstVisibleIndex > -1) {
-            setTimeout(() =>{
-              nodeList.scrollToIndex(firstVisibleIndex);
-            }, 1)
-            
-          }
-        }) 
-        PDQ.define('toggled-node-action', () =>{
-          //Need to remember where the scrollbar was before toggling nodes open and shut
-          firstVisibleIndex = nodeList.firstVisibleIndex;
-        })
+        
         PDQ.define('expand-all-action', input =>{
           if(!input || !input.type) return;
           myTree.allExpandedNodes = myTree.viewableNodes;
@@ -122,12 +96,18 @@
     </xtal-deco>
     <!-- Use xtal-tree view model component to provide snapshots of flat data to iron-list -->
     <xtal-tree id="myTree" ></xtal-tree>
-    <p-d on="toggled-node-changed" to="toggled-node-action{input:.}"></p-d>
-    <p-d on="viewable-nodes-changed" to="iron-list{items};view-nodes-action{input}"></p-d>
-    
-    <toggled-node-action></toggled-node-action>
-    <view-nodes-action></view-nodes-action>
-
+    <p-d on="viewable-nodes-changed" to="iron-list{items}"></p-d>
+    <p-d on="viewable-nodes-changed" to="#handleViewableNodesChanged{nodes}" skip-init m="1"></p-d>
+    <!-- <toggled-node-action></toggled-node-action> -->
+    <aggregator-fn id="handleViewableNodesChanged"><script nomodule>
+      ({nodes}) => {
+          const oldFVI = firstVisibleIndex;
+          setTimeout(() =>{
+            console.log('scrolling to ' + oldFVI);
+            nodeList.scrollToIndex(oldFVI);
+          }, 1)
+      }
+    </script></aggregator-fn>
 
     <!-- =============== Train xtal-cascade how to interpret / manipulate json data ============================= -->
     <xtal-deco>
@@ -199,8 +179,31 @@
         </div>
       </template>
     </iron-list>
+    <p-d on="scroll" to="{ironList:target}"></p-d>
+    <aggregator-fn><script nomodule>
+      ({ironList}) => {
+        firstVisibleIndex = ironList.firstVisibleIndex;
+        console.log('firstvisibleIndex = ' + firstVisibleIndex);
+      }
+    </script></aggregator-fn>
+    
+    <!--Polyfill support for re(dge)tro browsers -->
+    <script src="https://unpkg.com/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <!--Polymer (non minified, uses bare import specifiers, which only works in Chrome and Firefox Nightly thus far. This is just an example of a
+      list generator which xtal-cascade can interface with. -->
+    <script type="module" src="https://unpkg.com/@polymer/polymer@3.0.5/lib/elements/dom-if.js?module"></script>
+    <script type="module" src="https://unpkg.com/@polymer/iron-list@3.0.0-pre.21/iron-list.js?module"></script>
+    <!-- End Polymer refs -->
+    <script type="module" src="https://unpkg.com/xtal-splitting@0.0.8/xtal-splitting.js"></script>
+    <script src="https://unpkg.com/p-d.p-u@0.0.67/p-all.iife.js"></script>
+    <script src="https://unpkg.com/xtal-fetch@0.0.40/xtal-fetch.js"></script>
 
-
+    <script type="module" src="https://unpkg.com/xtal-tree@0.0.40/xtal-tree.js?module"></script>
+    <script src="https://unpkg.com/xtal-decorator@0.0.20/xtal-decorator.iife.js"></script>
+    <script type="module" src="https://unpkg.com/xtal-cascade@0.0.2/xtal-cascade.js?module"></script>
+    <script type="module" src="https://unpkg.com/@material/mwc-checkbox@0.1.2/mwc-checkbox.js?module"></script>
+    <script type="module" src="https://unpkg.com/aggregator-fn@0.0.9/aggregator-fn.iife.js"></script>
+    <script type="module" src="https://unpkg.com/xtal-state@0.0.12/xtal-state.js"></script>
   </div>
 
 </body>
