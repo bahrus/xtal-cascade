@@ -1,3 +1,7 @@
+[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/xtal-cascade)
+
+<a href="https://nodei.co/npm/xtal-cascade/"><img src="https://nodei.co/npm/xtal-cascade.png"></a>
+
 # \<xtal-cascade\>
 
 View Model for a tree with selectable nodes
