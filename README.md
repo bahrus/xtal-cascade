@@ -14,17 +14,16 @@ View Model for a tree with selectable nodes
 
 
     <!-- ================== Buttons / Search field ========================== -->
-    <button data-expand-cmd="all">Expand All</button>
-    <p-d on="click" to="xtal-tree{expandCmd:target.dataset.expandCmd}" skip-init></p-d>
+    <button disabled data-expand-cmd="allExpandedNodes">Expand All</button>
+    <p-d on="click" to="xtal-tree{expandCmd:target.dataset.expandCmd}" skip-init m="1"></p-d>
 
-    <button data-expand-cmd="none">Collapse All</button>
-    <p-d on="click" to="xtal-tree{expandCmd:target.dataset.expandCmd}" skip-init></p-d>
+    <button disabled data-expand-cmd="allCollapsedNodes">Collapse All</button>
+    <p-d on="click" to="xtal-tree{expandCmd:target.dataset.expandCmd}" skip-init m="1"></p-d>
 
     <!-- =================== Sort Buttons ================================= -->
-    <span>
-      <button data-dir="asc">Sort Asc</button>
-      <button data-dir="desc">Sort Desc</button>
-    </span>
+    <button data-dir="asc" disabled>Sort Asc</button>
+    <p-d on="click" to="xtal-tree{sorted:target.dataset.dir}" skip-init m="1"></p-d>
+    <button data-dir="desc" disabled>Sort Desc</button>
     <p-d on="click" to="xtal-tree{sorted:target.dataset.dir}" skip-init m="1"></p-d>
     <input type="text" placeholder="Search">
     <p-d id="searchInput" on="input" to="xtal-split{search}"></p-d>
@@ -65,14 +64,8 @@ View Model for a tree with selectable nodes
             onPropsChange(name, newVal){
               switch(name){
                 case 'expandCmd':
-                  switch(newVal){
-                    case 'all':
-                      this.allExpandedNodes = this.viewableNodes;
-                      break;
-                    case 'none':
-                      this.allCollapsedNodes = this.viewableNodes;
-                      break;
-                  }
+                  this[this.expandCmd] = this.viewableNodes;
+                  break;
                   
               }
             }
@@ -152,11 +145,13 @@ View Model for a tree with selectable nodes
               case 'hasNewNodeSelection':
                 if(!this.items) return;
                 const idx = this.firstVisibleIndex;
+                if(idx === undefined) return;
                 this.items = this.items.slice();
                 setTimeout(() => {
                   this.scrollToIndex(idx);
                 }, 1);
                 return this.items.slice();
+                break;
             }
           }
         })
