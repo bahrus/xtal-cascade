@@ -18,48 +18,20 @@
       m="1"></p-d>
     <h3>Basic xtal-cascade demo</h3>
 
-    <script>
-      var firstVisibleIndex = -1;
-    </script>
-    <script type="module">
-      //define a bunch of small pipe custom elements
-      import { PDQ } from 'https://unpkg.com/p-d.p-u@0.0.56/PDQ.js?module';
-      // PDQ.define('selected-nodes-change-action', t => {
-      //   if ((typeof (nodeList) === 'undefined') || !nodeList.items) return;
-      //   //Restore scroll position
-      //   const idx = nodeList.firstVisibleIndex;
-      //   nodeList.items = nodeList.items.slice();
-      //   //nodeList.scrollToIndex(idx);
-      //   setTimeout(() =>{
-      //       nodeList.scrollToIndex(idx);
-      //   }, 1);
-      //   return nodeList.items.slice();
-      // })
-
-      PDQ.define('expand-all-action', input => {
-        if (!input || !input.type) return;
-        myTree.allExpandedNodes = myTree.viewableNodes;
-      })
-      PDQ.define('collapse-all-action', input => {
-        if (!input || !input.type) return;
-        myTree.allCollapsedNodes = myTree.viewableNodes;
-      })
-    </script>
 
     <!-- ================== Buttons / Search field ========================== -->
-    <button>Expand All</button>
-    <p-d on="click" if="button" to="{input:.}"></p-d>
-    <expand-all-action></expand-all-action>
-    <button>Collapse All</button>
-    <p-d on="click" to="{input:.}"></p-d>
-    <collapse-all-action></collapse-all-action>
+    <button data-expand-cmd="all">Expand All</button>
+    <p-d on="click" to="xtal-tree{expandCmd:target.dataset.expandCmd}" skip-init></p-d>
+
+    <button data-expand-cmd="none">Collapse All</button>
+    <p-d on="click" to="xtal-tree{expandCmd:target.dataset.expandCmd}" skip-init></p-d>
 
     <!-- =================== Sort Buttons ================================= -->
     <span>
       <button data-dir="asc">Sort Asc</button>
       <button data-dir="desc">Sort Desc</button>
     </span>
-    <p-d on="click" if="button" to="xtal-tree{sorted:target.dataset.dir}" m="1"></p-d>
+    <p-d on="click" to="xtal-tree{sorted:target.dataset.dir}" skip-init m="1"></p-d>
     <input type="text" placeholder="Search">
     <p-d id="searchInput" on="input" to="xtal-split{search}"></p-d>
     <p-d on="input" to="xtal-tree{searchString}" m="1"></p-d>
@@ -76,7 +48,7 @@
             isOpenFn: node => node.expanded,
             levelSetterFn: function (nodes, level) {
               nodes.forEach(node => {
-                node.style = 'margin-left:' + (level * 12) + 'px';
+                node.style = 'margin-left:' + (level * 24) + 'px';
                 if (node.children) this.levelSetterFn(node.children, level + 1)
               })
             },
@@ -92,6 +64,23 @@
               if (lhs.name < rhs.name) return -1;
               if (lhs.name > rhs.name) return 1;
               return 0;
+            },
+            props:{
+              expandCmd: ''
+            },
+            onPropsChange(name, newVal){
+              switch(name){
+                case 'expandCmd':
+                  switch(newVal){
+                    case 'all':
+                      this.allExpandedNodes = this.viewableNodes;
+                      break;
+                    case 'none':
+                      this.allCollapsedNodes = this.viewableNodes;
+                      break;
+                  }
+                  
+              }
             }
           })
       </script>
@@ -100,12 +89,10 @@
     <xtal-tree id="myTree"></xtal-tree>
     <p-d on="viewable-nodes-changed" to="iron-list{items}"></p-d>
     <p-d on="viewable-nodes-changed" to="#handleViewableNodesChanged{nodes}" skip-init m="1"></p-d>
-    <!-- <toggled-node-action></toggled-node-action> -->
     <aggregator-fn id="handleViewableNodesChanged">
       <script nomodule>
-          ({ nodes, __this }) => {
+        ({ nodes, __this }) => {
           setTimeout(() => {
-            console.log('scrolling to ' + __this.firstVisibleIndex);
             nodeList.scrollToIndex(__this.firstVisibleIndex);
           }, 1)
         }
@@ -131,7 +118,7 @@
     </xtal-deco>
     <!--  ============== Use xtal-cascade to manage node selection with checkboxes. ============= -->
     <xtal-cascade id="myCascade"></xtal-cascade>
-    <p-d on="selected-root-nodes-changed" to="iron-list{hasNewNodeSelection:target.id}" m="1"></p-d>
+    <p-d on="selected-root-nodes-changed" to="iron-list{hasNewNodeSelection:target.id}" m="1" skip-init></p-d>
 
     <!-- =============== Style the tree UI elements -->
     <style>
@@ -159,7 +146,7 @@
       }
     </style>
 
-    <!-- =================== Configure the flat list generator (iron-list) -->
+    <!-- =========== Configure the flat list generator (iron-list) ========= -->
     <xtal-deco>
       <script nomodule>
         ({
@@ -167,13 +154,11 @@
             hasNewNodeSelection: false
           },
           onPropsChange: function (name, newVal) {
-            console.log('iah');
             switch (name) {
               case 'hasNewNodeSelection':
                 if(!this.items) return;
                 const idx = this.firstVisibleIndex;
                 this.items = this.items.slice();
-                //nodeList.scrollToIndex(idx);
                 setTimeout(() => {
                   this.scrollToIndex(idx);
                 }, 1);
@@ -207,10 +192,7 @@
     <p-d on="scroll" to="{ironList:target}"></p-d>
     <aggregator-fn>
       <script nomodule>
-          ({ ironList }) => {
-          firstVisibleIndex = ironList.firstVisibleIndex;
-          return firstVisibleIndex;
-        }
+          ({ ironList }) => ironList.firstVisibleIndex;
       </script>
     </aggregator-fn>
     <p-d on="value-changed" to="{history}"></p-d>
@@ -227,7 +209,7 @@
     <script src="https://unpkg.com/xtal-fetch@0.0.40/xtal-fetch.js"></script>
 
     <script type="module" src="https://unpkg.com/xtal-tree@0.0.40/xtal-tree.js?module"></script>
-    <script src="https://unpkg.com/xtal-decorator@0.0.20/xtal-decorator.iife.js"></script>
+    <script src="https://unpkg.com/xtal-decorator@0.0.27/xtal-decorator.iife.js"></script>
     <script type="module" src="https://unpkg.com/xtal-cascade@0.0.2/xtal-cascade.js?module"></script>
     <script type="module" src="https://unpkg.com/@material/mwc-checkbox@0.1.2/mwc-checkbox.js?module"></script>
     <script type="module" src="https://unpkg.com/aggregator-fn@0.0.10/aggregator-fn.iife.js"></script>
