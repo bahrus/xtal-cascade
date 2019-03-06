@@ -195,13 +195,13 @@
         </div>
       </template>
     </iron-list>
-    <p-d on="scroll" prop="ironList" val="target"></p-d>
-    <aggregator-fn>
+    <p-d on="scroll" prop="history" val="target.firstVisibleIndex"></p-d>
+    <!-- <aggregator-fn>
       <script nomodule>
           fn = ({ ironList }) => ironList.firstVisibleIndex;
       </script>
-    </aggregator-fn>
-    <p-d on="value-changed" prop="history"></p-d>
+    </aggregator-fn> -->
+    <!-- <p-d on="value-changed" prop="history"></p-d> -->
     <xtal-state-commit level="local" rewrite href="/scroll"></xtal-state-commit>
     <!--Polyfill support for re(dge)tro browsers -->
     <script src="https://unpkg.com/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
