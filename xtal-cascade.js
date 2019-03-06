@@ -1,4 +1,4 @@
-import { XtallatX } from 'xtal-latx/xtal-latx';
+import { XtallatX } from 'xtal-element/xtal-latx';
 /**
  * `xtal-cascade`
  *  Cascade node selection up and down a tree collection
@@ -218,4 +218,3 @@ class XtalCascade extends XtallatX(HTMLElement) {
     }
 }
 customElements.define(XtalCascade.is, XtalCascade);
-//# sourceMappingURL=xtal-cascade.js.map
