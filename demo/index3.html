@@ -195,7 +195,7 @@
         </div>
       </template>
     </iron-list>
-    <p-d on="scroll" to="ironList" val="target"></p-d>
+    <p-d on="scroll" prop="ironList" val="target"></p-d>
     <aggregator-fn>
       <script nomodule>
           fn = ({ ironList }) => ironList.firstVisibleIndex;
