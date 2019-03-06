@@ -174,12 +174,12 @@
               </template>
               <template is="dom-if" if="[[!item.children]]">📝</template>
             </span>
-            <p-u on="click" if="span" to="/myTree{toggledNode:target.node}"></p-u>
+            <p-u on="click" if="span" to="myTree" prop="toggledNode" val="target.node"></p-u>
             <span class="toggler" select-node="[[item]]" p-d-if="#searchInput">
               <mwc-checkbox checked="[[item.isSelected]]" indeterminate="[[item.isIndeterminate]]"></mwc-checkbox>
               <xtal-split search="[[search]]" text-content="[[item.name]]"></xtal-split>
             </span>
-            <p-u on="click" if="mwc-checkbox,xtal-split" to="/myCascade" prop="toggledNodeSelection" val="target.parentElement.selectNode"></p-u>
+            <p-u on="click" if="mwc-checkbox,xtal-split" to="myCascade" prop="toggledNodeSelection" val="target.parentElement.selectNode"></p-u>
           </div>
         </div>
       </template>
@@ -187,7 +187,7 @@
     <p-d on="scroll" to="ironList" val="target"></p-d>
     <aggregator-fn>
       <script nomodule>
-          ({ ironList }) => ironList.firstVisibleIndex;
+          fn = ({ ironList }) => ironList.firstVisibleIndex;
       </script>
     </aggregator-fn>
     <p-d on="value-changed" prop="history"></p-d>
@@ -201,13 +201,14 @@
     <!-- End Polymer refs -->
     <script type="module" src="https://unpkg.com/xtal-splitting@0.0.8/xtal-splitting.js"></script>
     <script type="module" src="https://unpkg.com/p-d.p-u@0.0.105/p-d.js?module"></script>
+    <script type="module" src="https://unpkg.com/p-d.p-u@0.0.105/p-u.js?module"></script>
     <script src="https://unpkg.com/xtal-fetch@0.0.40/xtal-fetch.js"></script>
 
     <script type="module" src="https://unpkg.com/xtal-tree@0.0.40/xtal-tree.js?module"></script>
     <script src="https://unpkg.com/xtal-decorator@0.0.27/xtal-decorator.iife.js"></script>
     <script type="module" src="https://unpkg.com/xtal-cascade@0.0.2/xtal-cascade.js?module"></script>
     <script type="module" src="https://unpkg.com/@material/mwc-checkbox@0.1.2/mwc-checkbox.js?module"></script>
-    <script type="module" src="https://unpkg.com/aggregator-fn@0.0.10/aggregator-fn.iife.js"></script>
+    <script type="module" src="https://unpkg.com/aggregator-fn@0.0.16/aggregator-fn.js?module"></script>
     <script type="module" src="https://unpkg.com/xtal-state@0.0.13/xtal-state.js"></script>
   </div>
 
