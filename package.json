@@ -3,6 +3,7 @@
   "version": "0.0.13",
   "description": "View Model for a tree with selectable nodes",
   "main": "xtal-cascade.js",
+  "module": "xtal-cascade.js",
   "repository": "https://github.com/bahrus/xtal-cascade",
   "author": "bahrus <anderson.bruce.b@gmail.com>",
   "license": "MIT",

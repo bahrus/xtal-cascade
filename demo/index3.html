@@ -10,30 +10,16 @@
 
 </head>
 
-<body>
+<body style="margin:0;padding:0;overflow:hidden">
 
-  <div>
+  <div style>
     <xtal-state-watch watch level="local"></xtal-state-watch>
     <p-d on="history-changed" to="#handleViewableNodesChanged" prop="firstVisibleIndex" val="target.history"></p-d>
     <p-d on="history-changed" to="#selectedRootNodesChangedHandler" prop="firstVisibleIndex" val="target.history"></p-d>
-    <h3>Basic xtal-cascade demo</h3>
+    
 
 
-    <!-- ================== Buttons / Search field ========================== -->
-    <button disabled data-expand-cmd="allExpandedNodes">Expand All</button>
-    <p-d on="click" to="xtal-tree" prop="expandCmd" val="target.dataset.expandCmd" skip-init m="1"></p-d>
-
-    <button disabled data-expand-cmd="allCollapsedNodes">Collapse All</button>
-    <p-d on="click" to="xtal-tree" prop="expandCmd" val="target.dataset.expandCmd" skip-init m="1"></p-d>
-
-    <!-- =================== Sort Buttons ================================= -->
-    <button data-dir="asc" disabled>Sort Asc</button>
-    <p-d on="click" to="xtal-tree" prop="sorted" val="target.dataset.dir" skip-init m="1"></p-d>
-    <button data-dir="desc" disabled>Sort Desc</button>
-    <p-d on="click" to="xtal-tree" prop="sorted" val="target.dataset.dir" skip-init m="1"></p-d>
-    <input type="text" placeholder="Search">
-    <p-d id="searchInput" on="input" to="xtal-split" prop="search"></p-d>
-    <p-d on="input" to="xtal-tree" prop="searchString" m="1"></p-d>
+    
 
     <!-- ================== Retrieve sample json file that has a dump of a bower file directory ============ -->
     <xtal-fetch fetch href="https://unpkg.com/xtal-tree@0.0.22/directory.json" as="json"></xtal-fetch>
