@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="height:100%">
 
 <head>
   <meta charset="utf-8">
@@ -10,9 +10,9 @@
 
 </head>
 
-<body style="margin:0;padding:0;overflow:hidden">
+<body style="margin:0;padding:0;overflow:hidden;height:100%">
 
-  <div style>
+  <div style="height:100%">
     <xtal-state-watch watch level="local"></xtal-state-watch>
     <p-d on="history-changed" to="#handleViewableNodesChanged" prop="firstVisibleIndex" val="target.history"></p-d>
     <p-d on="history-changed" to="#selectedRootNodesChangedHandler" prop="firstVisibleIndex" val="target.history"></p-d>
@@ -148,9 +148,15 @@
                   const idx = this.firstVisibleIndex;
                   if(idx === undefined) return;
                   this.items = this.items.slice();
+                  nodeList.style.opacity = 0.5;
                   setTimeout(() => {
                     this.scrollToIndex(idx);
-                  }, 1);
+                    setTimeout(() =>{
+                      nodeList._render();
+                      nodeList.style.opacity = 1;
+                    }, 100);
+                  }, 200);
+                  
                   return this.items.slice();
                   break;
               }
@@ -160,7 +166,7 @@
         })
       </script>
     </xtal-deco>
-    <iron-list style="height:400px" id="nodeList" mutable-data p-d-if="#searchInput">
+    <iron-list style="height:100%" id="nodeList" mutable-data p-d-if="#searchInput">
       <template>
         <div class="node" style$="[[item.style]]" p-d-if="#searchInput">
           <div class="row" p-d-if="#searchInput">
