@@ -10,10 +10,10 @@
 
 </head>
 
-<body style="margin:0;padding:0;overflow:hidden;height:100%">
+<body style="margin:0;padding:0;height:100%">
 
   <div style="height:100%">
-    <xtal-state-watch watch level="local"></xtal-state-watch>
+    <xtal-state-watch watch level="global"></xtal-state-watch>
     <p-d on="history-changed" to="#handleViewableNodesChanged" prop="firstVisibleIndex" val="target.history"></p-d>
     <p-d on="history-changed" to="#selectedRootNodesChangedHandler" prop="firstVisibleIndex" val="target.history"></p-d>
     
@@ -75,7 +75,7 @@
     <p-d on="viewable-nodes-changed" to="#handleViewableNodesChanged" prop="nodes" skip-init m="1"></p-d>
     <aggregator-fn id="handleViewableNodesChanged">
       <script nomodule>
-        ({ nodes, __this }) => {
+        fn = ({ nodes, __this }) => {
           setTimeout(() => {
             nodeList.scrollToIndex(__this.firstVisibleIndex);
           }, 1)
@@ -144,17 +144,19 @@
             onPropsChange: function (name, newVal) {
               switch (name) {
                 case 'hasNewNodeSelection':
+                  //console.log('hasNewNodeSelection');
                   if(!this.items) return;
                   const idx = this.firstVisibleIndex;
                   if(idx === undefined) return;
+                  //console.log('set new items');
                   this.items = this.items.slice();
                   nodeList.style.opacity = 0.5;
+                  
                   setTimeout(() => {
+                    //console.log('scroll to index');
                     this.scrollToIndex(idx);
-                    setTimeout(() =>{
-                      nodeList._render();
-                      nodeList.style.opacity = 1;
-                    }, 100);
+                    
+                    nodeList.style.opacity = 1;
                   }, 200);
                   
                   return this.items.slice();
@@ -188,7 +190,7 @@
       </template>
     </iron-list>
     <p-d on="scroll" prop="history" val="target.firstVisibleIndex"></p-d>
-    <xtal-state-commit level="local" rewrite href="/scroll"></xtal-state-commit>
+    <xtal-state-commit level="global" rewrite href="/scroll"></xtal-state-commit>
     <!--Polyfill support for re(dge)tro browsers -->
     <script src="https://unpkg.com/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
     <!--Polymer (non minified, uses bare import specifiers, which only works in Chrome and Firefox Nightly thus far. This is just an example of a
@@ -203,10 +205,22 @@
 
     <script type="module" src="https://unpkg.com/xtal-tree@0.0.46/xtal-tree.js?module"></script>
     <script type="module" src="https://unpkg.com/xtal-decorator@0.0.41/xtal-deco.js?module"></script>
-    <script type="module" src="https://unpkg.com/xtal-cascade@0.0.13/xtal-cascade.js?module"></script>
+    <script type="module" src="../xtal-cascade.js"></script>
     <script type="module" src="https://unpkg.com/@material/mwc-checkbox@0.1.2/mwc-checkbox.js?module"></script>
     <script type="module" src="https://unpkg.com/aggregator-fn@0.0.16/aggregator-fn.js?module"></script>
     <script type="module" src="https://unpkg.com/xtal-state@0.0.13/xtal-state.js"></script>
+    <script>
+      function reRender(){
+        if(nodeList && nodeList._render){
+          nodeList._render();
+        }
+        
+        setTimeout(() =>{
+          reRender();
+        }, 1000);
+      }
+      reRender();
+    </script>
   </div>
 
 </body>
