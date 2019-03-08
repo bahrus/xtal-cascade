@@ -40,49 +40,45 @@ View Model for a tree with selectable nodes
     <p-d on="result-changed" to="xtal-tree,xtal-cascade" prop="nodes" m="2"></p-d>
 
     <!-- ================== Train xtal-tree how to intepret / manipulate the json data ===================================== -->
-    <xtal-deco>
-      <script nomodule>
-          ({
-            vals:{
-              childrenFn: node => node.children,
-              isOpenFn: node => node.expanded,
-              levelSetterFn: function (nodes, level) {
-                nodes.forEach(node => {
-                  node.style = 'margin-left:' + (level * 24) + 'px';
-                  if (node.children) this.levelSetterFn(node.children, level + 1)
-                })
-              },
-              toggleNodeFn: node => {
-                node.expanded = !node.expanded;
-              },
-              testNodeFn: (node, search) => {
-                if (!search) return true;
-                if (!node.nameLC) node.nameLC = node.name.toLowerCase();
-                return node.nameLC.indexOf(search.toLowerCase()) > -1;
-              },
-              compareFn: (lhs, rhs) => {
-                if (lhs.name < rhs.name) return -1;
-                if (lhs.name > rhs.name) return 1;
-                return 0;
-              },
-            },
-            props:{
-              expandCmd: ''
-            },
-            methods:{
-              onPropsChange(name, newVal){
-                switch(name){
-                  case 'expandCmd':
-                    this[this.expandCmd] = this.viewableNodes;
-                    break;
-                    
-                }
-              }
-            }
-
+    <xtal-deco><script nomodule>({
+      vals:{
+        childrenFn: node => node.children,
+        isOpenFn: node => node.expanded,
+        levelSetterFn: function (nodes, level) {
+          nodes.forEach(node => {
+            node.style = 'margin-left:' + (level * 24) + 'px';
+            if (node.children) this.levelSetterFn(node.children, level + 1)
           })
-      </script>
-    </xtal-deco>
+        },
+        toggleNodeFn: node => {
+          node.expanded = !node.expanded;
+        },
+        testNodeFn: (node, search) => {
+          if (!search) return true;
+          if (!node.nameLC) node.nameLC = node.name.toLowerCase();
+          return node.nameLC.indexOf(search.toLowerCase()) > -1;
+        },
+        compareFn: (lhs, rhs) => {
+          if (lhs.name < rhs.name) return -1;
+          if (lhs.name > rhs.name) return 1;
+          return 0;
+        },
+      },
+      props:{
+        expandCmd: ''
+      },
+      methods:{
+        onPropsChange(name, newVal){
+          switch(name){
+            case 'expandCmd':
+              this[this.expandCmd] = this.viewableNodes;
+              break;
+              
+          }
+        }
+      }
+
+    })</script></xtal-deco>
     <!-- Use xtal-tree view model component to provide snapshots of flat data to iron-list -->
     <xtal-tree id="myTree"></xtal-tree>
     <p-d on="viewable-nodes-changed" to="iron-list" prop="items"></p-d>
@@ -98,25 +94,21 @@ View Model for a tree with selectable nodes
     </aggregator-fn>
 
     <!-- =============== Train xtal-cascade how to interpret / manipulate json data ============================= -->
-    <xtal-deco>
-      <script nomodule>
-        ({
-          vals:{
-            childrenFn: node => node.children,
-            keyFn: node => node.path,
-            toggleIndeterminateFn: node => {
-              node.isIndeterminate = !node.isIndeterminate;
-            },
-            toggleNodeSelectionFn: node => {
-              node.isSelected = !node.isSelected;
-            },
-            isIndeterminateFn: node => node.isIndeterminate,
-            isSelectedFn: node => node.isSelected,
-          }
+    <xtal-deco><script nomodule>({
+      vals:{
+        childrenFn: node => node.children,
+        keyFn: node => node.path,
+        toggleIndeterminateFn: node => {
+          node.isIndeterminate = !node.isIndeterminate;
+        },
+        toggleNodeSelectionFn: node => {
+          node.isSelected = !node.isSelected;
+        },
+        isIndeterminateFn: node => node.isIndeterminate,
+        isSelectedFn: node => node.isSelected,
+      }
 
-        })
-      </script>
-    </xtal-deco>
+    })</script></xtal-deco>
     <!--  ============== Use xtal-cascade to manage node selection with checkboxes. ============= -->
     <xtal-cascade id="myCascade"></xtal-cascade>
     <p-d on="selected-root-nodes-changed" to="iron-list" prop="hasNewNodeSelection" val="target.id" m="1" skip-init></p-d>
@@ -148,32 +140,28 @@ View Model for a tree with selectable nodes
     </style>
 
     <!-- =========== Configure the flat list generator (iron-list) ========= -->
-    <xtal-deco>
-      <script nomodule>
-        ({
-          props: {
-            hasNewNodeSelection: false
-          },
-          methods:{
-            onPropsChange: function (name, newVal) {
-              switch (name) {
-                case 'hasNewNodeSelection':
-                  if(!this.items) return;
-                  const idx = this.firstVisibleIndex;
-                  if(idx === undefined) return;
-                  this.items = this.items.slice();
-                  setTimeout(() => {
-                    this.scrollToIndex(idx);
-                  }, 1);
-                  return this.items.slice();
-                  break;
-              }
-            }
+    <xtal-deco><script nomodule>({
+      props: {
+        hasNewNodeSelection: false
+      },
+      methods:{
+        onPropsChange: function (name, newVal) {
+          switch (name) {
+            case 'hasNewNodeSelection':
+              if(!this.items) return;
+              const idx = this.firstVisibleIndex;
+              if(idx === undefined) return;
+              this.items = this.items.slice();
+              setTimeout(() => {
+                this.scrollToIndex(idx);
+              }, 1);
+              return this.items.slice();
+              break;
           }
+        }
+      }
 
-        })
-      </script>
-    </xtal-deco>
+    })</script></xtal-deco>
     <iron-list style="height:400px" id="nodeList" mutable-data p-d-if="#searchInput">
       <template>
         <div class="node" style$="[[item.style]]" p-d-if="#searchInput">
