@@ -89,7 +89,7 @@
     <p-d on="viewable-nodes-changed" to="#handleViewableNodesChanged" prop="nodes" skip-init m="1"></p-d>
     <aggregator-fn id="handleViewableNodesChanged">
       <script nomodule>
-        ({ nodes, __this }) => {
+        fn = ({ nodes, __this }) => {
           setTimeout(() => {
             nodeList.scrollToIndex(__this.firstVisibleIndex);
           }, 1)
@@ -158,14 +158,15 @@
             onPropsChange: function (name, newVal) {
               switch (name) {
                 case 'hasNewNodeSelection':
-                  if(!this.items) return;
-                  const idx = this.firstVisibleIndex;
-                  if(idx === undefined) return;
-                  this.items = this.items.slice();
-                  setTimeout(() => {
-                    this.scrollToIndex(idx);
-                  }, 1);
-                  return this.items.slice();
+                  // if(!this.items) return;
+                  // const idx = this.firstVisibleIndex;
+                  // if(idx === undefined) return;
+                  // this.items = this.items.slice();
+                  // setTimeout(() => {
+                  //   this.scrollToIndex(idx);
+                  // }, 1);
+                  // return this.items.slice();
+                  nodeList._render();
                   break;
               }
             }
