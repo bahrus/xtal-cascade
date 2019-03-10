@@ -11,13 +11,21 @@ const selectors = createTemplate(/* html */ `
     <xtal-split search="[[search]]" text-content="[[item.name]]"></xtal-split>
   </span>
 `);
+const style = createTemplate(/* html */ `
+  <style>
+    .toggler{
+      display:flex;
+      flex-direction:row;
+      align-items:center;
+    }
+  </style>
+`);
 const selectedNodeEvent = 'selectedNodeEvent';
 export class XtalCascadeBasic extends XtalTreeBasic {
     constructor() {
         super(...arguments);
         this._renderOptions = {
             initializedCallback: (ctx, target) => {
-                console.log(target);
                 init(target, {
                     Transform: {
                         'p-d[on="fetch-complete"]': ({ target }) => {
@@ -101,6 +109,7 @@ export class XtalCascadeBasic extends XtalTreeBasic {
                         }
                     }
                 });
+                target.appendChild(style.content.cloneNode(true));
             }
         };
     }
