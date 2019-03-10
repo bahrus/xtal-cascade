@@ -134,6 +134,7 @@ export class XtalCascade extends XtallatX(HTMLElement) {
             const parentNd = this._childToParentLookup[thisID];
             if (parentNd) {
                 const parentId = this._keyFn(parentNd);
+                const allChildrenOfParentSelected = this._selectedChildScore[parentId] === this._childrenFn(parentNd).length;
                 if (reduceParentSelectedChildScore) {
                     this._selectedChildScore[parentId]--;
                 }
@@ -145,31 +146,48 @@ export class XtalCascade extends XtallatX(HTMLElement) {
                 }
                 //const children = this._childrenFn(parentNd);
                 if (this._selectedChildScore[parentId] === 0) {
-                    if (this._indeterminateChildScore[parentId] === 0) {
-                        reduceParentSelectedChildScore = this._isSelectedFn(parentNd);
-                        this.unselectNodeShallow(parentNd);
-                        reduceParentIndeterminateChildScore = false;
-                        increaseParentIndeterminateChildScore = false; //?
+                    //No more selected children
+                    if (this._isSelectedFn(parentNd)) {
+                        if (this._indeterminateChildScore[parentId] === 0) {
+                            //ready to unselect parent
+                            reduceParentSelectedChildScore = true;
+                            this.unselectNodeShallow(parentNd);
+                            reduceParentIndeterminateChildScore = false;
+                            increaseParentIndeterminateChildScore = false; //?
+                        }
+                        else {
+                            //Still have some indeterminate
+                            reduceParentIndeterminateChildScore = true; //?
+                        }
                     }
-                    else {
-                        reduceParentIndeterminateChildScore = true; //?
+                    else if (this._isIndeterminateFn(parentNd)) {
+                        this._indeterminateChildScore[parentId]--;
+                        reduceParentIndeterminateChildScore = this._indeterminateChildScore[parentId] === 0;
                     }
-                    //if(this._unse)
+                    else if (this._indeterminateChildScore[parentId] === 0) {
+                        if (this._isIndeterminateFn(parentNd)) {
+                            this._toggleInterminateFn(parentNd);
+                            reduceParentIndeterminateChildScore = true;
+                        }
+                    }
                 }
                 else {
-                    if (this._isSelectedFn(parentNd)) {
-                        this._toggleNodeSelectionFn(parentNd);
-                        reduceParentSelectedChildScore = true;
-                    }
-                    else {
-                        reduceParentSelectedChildScore = false;
-                    }
-                    if (!this._isIndeterminateFn(parentNd)) {
-                        increaseParentIndeterminateChildScore = true;
+                    if (allChildrenOfParentSelected) {
+                        //need to sent parent to interminant
                         this._toggleInterminateFn(parentNd);
+                        increaseParentIndeterminateChildScore = true;
+                        reduceParentIndeterminateChildScore = false;
                     }
                     else {
+                        // //no change to intermediate
+                        // if (this._isSelectedFn(parentNd)) {
+                        //     this._toggleNodeSelectionFn(parentNd);
+                        //     reduceParentSelectedChildScore = true;
+                        // }else{
+                        //     reduceParentSelectedChildScore = false;
+                        // }
                         increaseParentIndeterminateChildScore = false;
+                        reduceParentIndeterminateChildScore = false;
                     }
                 }
             }
