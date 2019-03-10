@@ -20,6 +20,14 @@ export class XtalCascadeBasic extends XtalTreeBasic {
         console.log(target);
         init(target, {
           Transform:{
+            'p-d[on="fetch-complete"]': ({target}) => {
+              decorate<any>(target as any, {
+                attribs:{
+                  m: '2',
+                  to: 'xtal-tree,xtal-cascade'
+                }
+              })
+            },
             'p-d[prop="items"]': ({target}) =>{
               const cascade = document.createElement('xtal-cascade');
               cascade.id = 'myCascade';
@@ -41,6 +49,18 @@ export class XtalCascadeBasic extends XtalTreeBasic {
               } as any);
               cascade.insertAdjacentElement('afterend', pd);
             },
+            [XtalCascade.is]: ({target}) => decorate<XtalCascade>(target as XtalCascade, {
+              childrenFn: node => (<any>node).children,
+              keyFn: node => (<any>node).path,
+              toggleIndeterminateFn: node => {
+                (<any>node).isIndeterminate = !(<any>node).isIndeterminate;
+              },
+              toggleNodeSelectionFn: node => {
+                (<any>node).isSelected = !(<any>node).isSelected;
+              },
+              isIndeterminateFn: node => (<any>node).isIndeterminate,
+              isSelectedFn: node => (<any>node).isSelected,
+            } as XtalCascade, {}),
             'iron-list':{
               template: ({target}) =>{
                 const content = (target as HTMLTemplateElement).content;
