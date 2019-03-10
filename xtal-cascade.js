@@ -86,10 +86,11 @@ export class XtalCascade extends XtallatX(HTMLElement) {
     }
     selectNodeAndCascade(tn) {
         let increaseParentSelectedChildScore = !this._isSelectedFn(tn);
+        let increaseParentIndeterminateChildScore = false;
+        let reduceParentIndeterminateChildScore = this._isIndeterminateFn(tn);
         this.selectNodeRecursive(tn);
         let currentNode = tn;
         do {
-            //debugger;
             const thisID = this._keyFn(currentNode);
             const parentNd = this._childToParentLookup[thisID];
             if (parentNd) {
@@ -97,13 +98,24 @@ export class XtalCascade extends XtallatX(HTMLElement) {
                 if (increaseParentSelectedChildScore) {
                     this._selectedChildScore[parentId]++;
                 }
+                if (increaseParentIndeterminateChildScore) {
+                    this._indeterminateChildScore[parentId]++;
+                }
+                if (reduceParentIndeterminateChildScore) {
+                    this._indeterminateChildScore[parentId]--;
+                }
                 const children = this._childrenFn(parentNd);
                 if (this._selectedChildScore[parentId] === children.length) {
+                    increaseParentSelectedChildScore = !this._isSelectedFn(parentNd);
+                    increaseParentIndeterminateChildScore = !this._isIndeterminateFn(parentNd);
+                    reduceParentIndeterminateChildScore = this._isIndeterminateFn(parentNd);
+                    //this._indeterminateChildScore[parentId] = 0;
                     this.selectNodeShallow(parentNd);
-                    increaseParentSelectedChildScore = true;
                 }
                 else {
                     //this._toggleInterminateFn(parentNd);
+                    increaseParentIndeterminateChildScore = !this._isIndeterminateFn(parentNd);
+                    reduceParentIndeterminateChildScore = false;
                     this.setNodeIndeterminate(parentNd);
                     increaseParentSelectedChildScore = false;
                 }
@@ -113,6 +125,8 @@ export class XtalCascade extends XtallatX(HTMLElement) {
     }
     unselectNodeAndCascade(tn) {
         let reduceParentSelectedChildScore = this._isSelectedFn(tn);
+        let increaseParentIndeterminateChildScore = false;
+        let reduceParentIndeterminateChildScore = false;
         this.unselectNodeRecursive(tn);
         let currentNode = tn;
         do {
@@ -123,19 +137,39 @@ export class XtalCascade extends XtallatX(HTMLElement) {
                 if (reduceParentSelectedChildScore) {
                     this._selectedChildScore[parentId]--;
                 }
+                if (increaseParentIndeterminateChildScore) {
+                    this._indeterminateChildScore[parentId]++;
+                }
+                if (reduceParentIndeterminateChildScore) {
+                    this._indeterminateChildScore[parentId]--;
+                }
                 //const children = this._childrenFn(parentNd);
                 if (this._selectedChildScore[parentId] === 0) {
-                    this.unselectNodeShallow(parentNd);
+                    if (this._indeterminateChildScore[parentId] === 0) {
+                        reduceParentSelectedChildScore = this._isSelectedFn(parentNd);
+                        this.unselectNodeShallow(parentNd);
+                        reduceParentIndeterminateChildScore = false;
+                        increaseParentIndeterminateChildScore = false; //?
+                    }
+                    else {
+                        reduceParentIndeterminateChildScore = true; //?
+                    }
+                    //if(this._unse)
                 }
                 else {
-                    if (!this._isIndeterminateFn(parentNd))
-                        this._toggleInterminateFn(parentNd);
                     if (this._isSelectedFn(parentNd)) {
                         this._toggleNodeSelectionFn(parentNd);
                         reduceParentSelectedChildScore = true;
                     }
                     else {
                         reduceParentSelectedChildScore = false;
+                    }
+                    if (!this._isIndeterminateFn(parentNd)) {
+                        increaseParentIndeterminateChildScore = true;
+                        this._toggleInterminateFn(parentNd);
+                    }
+                    else {
+                        increaseParentIndeterminateChildScore = false;
                     }
                 }
             }
@@ -174,6 +208,7 @@ export class XtalCascade extends XtallatX(HTMLElement) {
     startCreatingChildToParentLookup() {
         this._childToParentLookup = {};
         this._selectedChildScore = {};
+        this._indeterminateChildScore = {};
         this.createChildToParentLookup(this._nodes, this._childToParentLookup);
         this.updateSelectedRootNodes();
     }
