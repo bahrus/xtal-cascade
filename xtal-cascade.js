@@ -218,12 +218,16 @@ export class XtalCascade extends XtallatX(HTMLElement) {
         nodes.forEach(node => {
             const nodeKey = this._keyFn(node);
             const scs = this._selectedChildScore;
+            const ind = this._indeterminateChildScore;
             scs[nodeKey] = 0;
+            ind[nodeKey] = 0;
             const children = this._childrenFn(node);
             if (children) {
                 children.forEach(child => {
                     if (this._isSelectedFn(child))
                         scs[nodeKey]++;
+                    if (this._isIndeterminateFn(child))
+                        ind[nodeKey]++;
                     const childId = this._keyFn(child);
                     lookup[childId] = node;
                 });
