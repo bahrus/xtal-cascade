@@ -3,7 +3,7 @@ import {RenderOptions, RenderContext} from 'trans-render/init.d.js';
 import {init} from 'trans-render/init.js';
 import {define} from 'xtal-element/define.js';
 import {createTemplate} from 'xtal-element/utils.js';
-import {decorate} from 'trans-render/decorate.js';
+import {decorate, attribs} from 'trans-render/decorate.js';
 import {XtalCascade} from './xtal-cascade.js';
 import '@material/mwc-checkbox/mwc-checkbox.js';
 const selectors = createTemplate(/* html */`
@@ -22,7 +22,7 @@ export class XtalCascadeBasic extends XtalTreeBasic {
           Transform:{
             'p-d[on="fetch-complete"]': ({target}) => {
               decorate<any>(target as any, {
-                attribs:{
+                [attribs]:{
                   m: '2',
                   to: 'xtal-tree,xtal-cascade'
                 }
@@ -38,7 +38,7 @@ export class XtalCascadeBasic extends XtalTreeBasic {
               target.insertAdjacentElement('afterend', cascade);
               const pd = document.createElement('p-d');
               decorate<HTMLElement>(pd, {
-                attribs:{
+                [attribs]:{
                   on: 'selected-root-nodes-changed',
                   to: 'iron-list',
                   prop: 'hasNewNodeSelection',
@@ -82,6 +82,19 @@ export class XtalCascadeBasic extends XtalTreeBasic {
                         selectedNode: (<any>e).target.parentNode.selectNode
                       }
                     }))
+                  }
+
+                },
+                props:{
+                  hasNewNodeSelection: false
+                },
+                methods:{
+                  onPropsChange: function (name, newVal) {
+                    switch (name) {
+                      case 'hasNewNodeSelection':
+                        this._render();
+                        break;
+                    }
                   }
                 }
               })
