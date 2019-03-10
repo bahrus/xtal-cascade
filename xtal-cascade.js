@@ -109,12 +109,15 @@ export class XtalCascade extends XtallatX(HTMLElement) {
     unselectNodeAndCascade(tn) {
         this.unselectNodeRecursive(tn);
         let currentNode = tn;
+        let reduceParentSelectedChildScore = true;
         do {
             const thisID = this._keyFn(currentNode);
             const parentNd = this._childToParentLookup[thisID];
             if (parentNd) {
                 const parentId = this._keyFn(parentNd);
-                this._selectedChildScore[parentId]--;
+                if (reduceParentSelectedChildScore) {
+                    this._selectedChildScore[parentId]--;
+                }
                 //const children = this._childrenFn(parentNd);
                 if (this._selectedChildScore[parentId] === 0) {
                     this.unselectNodeShallow(parentNd);
@@ -122,8 +125,13 @@ export class XtalCascade extends XtallatX(HTMLElement) {
                 else {
                     if (!this._isIndeterminateFn(parentNd))
                         this._toggleInterminateFn(parentNd);
-                    if (this._isSelectedFn(parentNd))
+                    if (this._isSelectedFn(parentNd)) {
                         this._toggleNodeSelectionFn(parentNd);
+                        reduceParentSelectedChildScore = true;
+                    }
+                    else {
+                        reduceParentSelectedChildScore = false;
+                    }
                 }
             }
             currentNode = parentNd;
