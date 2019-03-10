@@ -150,19 +150,25 @@ export class XtalCascade extends XtallatX(HTMLElement) {
                     if (this._isSelectedFn(parentNd)) {
                         if (this._indeterminateChildScore[parentId] === 0) {
                             //ready to unselect parent
-                            reduceParentSelectedChildScore = true;
-                            this.unselectNodeShallow(parentNd);
                             reduceParentIndeterminateChildScore = false;
                             increaseParentIndeterminateChildScore = false; //?
                         }
                         else {
                             //Still have some indeterminate
-                            reduceParentIndeterminateChildScore = true; //?
+                            reduceParentIndeterminateChildScore = true;
+                            if (!this._isIndeterminateFn(parentNd)) { //do we need this?
+                                this._toggleInterminateFn(parentNd);
+                            }
                         }
+                        this.unselectNodeShallow(parentNd);
+                        reduceParentSelectedChildScore = true;
                     }
                     else if (this._isIndeterminateFn(parentNd)) {
-                        this._indeterminateChildScore[parentId]--;
-                        reduceParentIndeterminateChildScore = this._indeterminateChildScore[parentId] === 0;
+                        //this._indeterminateChildScore[parentId]--;
+                        if (this._indeterminateChildScore[parentId] === 0) {
+                            this._toggleInterminateFn(parentNd);
+                            reduceParentIndeterminateChildScore = true;
+                        }
                     }
                     else if (this._indeterminateChildScore[parentId] === 0) {
                         if (this._isIndeterminateFn(parentNd)) {
@@ -173,6 +179,7 @@ export class XtalCascade extends XtallatX(HTMLElement) {
                 }
                 else {
                     if (allChildrenOfParentSelected) {
+                        this.unselectNodeShallow(parentNd);
                         //need to sent parent to interminant
                         this._toggleInterminateFn(parentNd);
                         increaseParentIndeterminateChildScore = true;
