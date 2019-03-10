@@ -136,7 +136,12 @@ export class XtalCascade extends XtallatX(HTMLElement) {
                 const parentId = this._keyFn(parentNd);
                 const allChildrenOfParentSelected = this._selectedChildScore[parentId] === this._childrenFn(parentNd).length;
                 if (reduceParentSelectedChildScore) {
-                    this._selectedChildScore[parentId]--;
+                    if (this._selectedChildScore[parentId] === 0) {
+                        debugger;
+                    }
+                    else {
+                        this._selectedChildScore[parentId]--;
+                    }
                 }
                 if (increaseParentIndeterminateChildScore) {
                     this._indeterminateChildScore[parentId]++;
@@ -165,12 +170,14 @@ export class XtalCascade extends XtallatX(HTMLElement) {
                     }
                     else if (this._isIndeterminateFn(parentNd)) {
                         //this._indeterminateChildScore[parentId]--;
+                        reduceParentSelectedChildScore = false;
                         if (this._indeterminateChildScore[parentId] === 0) {
                             this._toggleInterminateFn(parentNd);
                             reduceParentIndeterminateChildScore = true;
                         }
                     }
                     else if (this._indeterminateChildScore[parentId] === 0) {
+                        reduceParentSelectedChildScore = false;
                         if (this._isIndeterminateFn(parentNd)) {
                             this._toggleInterminateFn(parentNd);
                             reduceParentIndeterminateChildScore = true;
@@ -178,10 +185,12 @@ export class XtalCascade extends XtallatX(HTMLElement) {
                     }
                 }
                 else {
+                    reduceParentSelectedChildScore = false;
                     if (allChildrenOfParentSelected) {
                         this.unselectNodeShallow(parentNd);
                         //need to sent parent to interminant
                         this._toggleInterminateFn(parentNd);
+                        reduceParentSelectedChildScore = true;
                         increaseParentIndeterminateChildScore = true;
                         reduceParentIndeterminateChildScore = false;
                     }
