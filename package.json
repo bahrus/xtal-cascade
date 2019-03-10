@@ -8,11 +8,10 @@
   "author": "bahrus <anderson.bruce.b@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "xtal-element": "0.0.30"
+    "xtal-tree": "0.0.50",
+    "trans-render": "0.0.80"
   },
   "devDependencies": {
-    "@polymer/iron-demo-helpers": "3.1.0",
-    "@polymer/polymer": "3.1.0",
     "@webcomponents/webcomponentsjs": "2.2.7"
   }
 }
