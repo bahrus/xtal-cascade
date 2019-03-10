@@ -8,8 +8,9 @@
   "author": "bahrus <anderson.bruce.b@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "xtal-tree": "0.0.50",
-    "trans-render": "0.0.80"
+    "xtal-tree": "0.0.52",
+    "trans-render": "0.0.81",
+    "@material/mwc-checkbox": "0.3.6"
   },
   "devDependencies": {
     "@webcomponents/webcomponentsjs": "2.2.7"

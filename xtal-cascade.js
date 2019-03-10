@@ -7,7 +7,7 @@ import { XtallatX } from 'xtal-element/xtal-latx';
  * @polymer
  * @demo demo/index.html
  */
-class XtalCascade extends XtallatX(HTMLElement) {
+export class XtalCascade extends XtallatX(HTMLElement) {
     static get is() { return 'xtal-cascade'; }
     get childrenFn() {
         return this._childrenFn;

@@ -16,7 +16,7 @@ export interface ITree {
  * @polymer
  * @demo demo/index.html
  */
-class XtalCascade extends XtallatX(HTMLElement) {
+export class XtalCascade extends XtallatX(HTMLElement) {
     static get is(){return 'xtal-cascade';}
 
     _childrenFn: (tn: ITreeNode) => ITreeNode[];
