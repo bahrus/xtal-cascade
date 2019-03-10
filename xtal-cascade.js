@@ -171,9 +171,13 @@ export class XtalCascade extends XtallatX(HTMLElement) {
                     else if (this._isIndeterminateFn(parentNd)) {
                         //this._indeterminateChildScore[parentId]--;
                         reduceParentSelectedChildScore = false;
+                        increaseParentIndeterminateChildScore = false;
                         if (this._indeterminateChildScore[parentId] === 0) {
                             this._toggleInterminateFn(parentNd);
                             reduceParentIndeterminateChildScore = true;
+                        }
+                        else {
+                            reduceParentIndeterminateChildScore = false;
                         }
                     }
                     else if (this._indeterminateChildScore[parentId] === 0) {
@@ -182,6 +186,9 @@ export class XtalCascade extends XtallatX(HTMLElement) {
                             this._toggleInterminateFn(parentNd);
                             reduceParentIndeterminateChildScore = true;
                         }
+                        else {
+                            reduceParentIndeterminateChildScore = false;
+                        }
                     }
                 }
                 else {
@@ -189,19 +196,17 @@ export class XtalCascade extends XtallatX(HTMLElement) {
                     if (allChildrenOfParentSelected) {
                         this.unselectNodeShallow(parentNd);
                         //need to sent parent to interminant
-                        this._toggleInterminateFn(parentNd);
+                        if (!this._isIndeterminateFn(parentNd)) {
+                            this._toggleInterminateFn(parentNd);
+                            increaseParentIndeterminateChildScore = true;
+                        }
+                        else {
+                            increaseParentIndeterminateChildScore = false;
+                        }
                         reduceParentSelectedChildScore = true;
-                        increaseParentIndeterminateChildScore = true;
                         reduceParentIndeterminateChildScore = false;
                     }
                     else {
-                        // //no change to intermediate
-                        // if (this._isSelectedFn(parentNd)) {
-                        //     this._toggleNodeSelectionFn(parentNd);
-                        //     reduceParentSelectedChildScore = true;
-                        // }else{
-                        //     reduceParentSelectedChildScore = false;
-                        // }
                         increaseParentIndeterminateChildScore = false;
                         reduceParentIndeterminateChildScore = false;
                     }
