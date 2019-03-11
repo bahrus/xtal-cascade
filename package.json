@@ -9,7 +9,7 @@
   "license": "MIT",
   "dependencies": {
     "xtal-tree": "0.0.62",
-    "trans-render": "0.0.82",
+    "trans-render": "0.0.83",
     "@material/mwc-checkbox": "0.3.6"
   },
   "devDependencies": {

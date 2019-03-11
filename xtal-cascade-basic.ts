@@ -4,6 +4,7 @@ import {init} from 'trans-render/init.js';
 import {define} from 'xtal-element/define.js';
 import {createTemplate} from 'xtal-element/utils.js';
 import {decorate, attribs} from 'trans-render/decorate.js';
+import {insertAdjacentTemplate} from 'trans-render/insertAdjacentTemplate.js';
 import {XtalCascade} from './xtal-cascade.js';
 import 'p-d.p-u/p-unt.js';
 import '@material/mwc-checkbox/mwc-checkbox.js';
@@ -43,11 +44,12 @@ export class XtalCascadeBasic extends XtalTreeBasic {
               })
             },
             'p-d[prop="items"]': ({target}) =>{
-              const clone = cascadeT.content.cloneNode(true);
-              let appendTarget = target;
-              Array.from((<any>clone).children).forEach(child =>{
-                appendTarget = appendTarget.insertAdjacentElement('afterend', child as HTMLElement);
-              })
+              insertAdjacentTemplate(cascadeT, target, 'afterend');
+              // const clone = cascadeT.content.cloneNode(true);
+              // let appendTarget = target;
+              // Array.from((<any>clone).children).forEach(child =>{
+              //   appendTarget = appendTarget.insertAdjacentElement('afterend', child as HTMLElement);
+              // })
             },
             [XtalCascade.is]: ({target}) => decorate<XtalCascade>(target as XtalCascade, {
               childrenFn: node => (<any>node).children,
