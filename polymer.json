@@ -1,8 +1,17 @@
 {
+  "entrypoint": "index.html",
   "npm": true,
+  "moduleResolution": "node",
   "lint": {
     "rules": [
       "polymer-3"
     ]
-  }
+  },
+  "builds":[
+    {
+      "preset": "es5-bundled",
+      "html":{"minify": false},
+      "js": {"minify": false, "compile": true}
+    }
+  ]
 }
