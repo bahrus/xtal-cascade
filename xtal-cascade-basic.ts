@@ -5,6 +5,7 @@ import {define} from 'xtal-element/define.js';
 import {createTemplate} from 'xtal-element/utils.js';
 import {decorate, attribs} from 'trans-render/decorate.js';
 import {XtalCascade} from './xtal-cascade.js';
+import 'p-d.p-u/p-unt.js';
 import '@material/mwc-checkbox/mwc-checkbox.js';
 const selectors = createTemplate(/* html */`
   <span class="toggler" select-node="[[item]]" p-d-if="p-d-r">
@@ -20,6 +21,11 @@ const style = createTemplate(/* html */`
       align-items:center;
     }
   </style>
+`);
+const cascadeT = createTemplate(/* html */`
+  <xtal-cascade id="myCascade"></xtal-cascade>
+  <p-d on="selected-root-nodes-changed" to="iron-list" prop="hasNewNodeSelection" val="target.id" m="1" skip-init></p-d>
+   <p-unt on="selected-root-nodes-changed" dispatch to="selected-nodes-changed" bubbles skip-init></p-unt>
 `);
 const selectedNodeEvent = 'selectedNodeEvent';
 export class XtalCascadeBasic extends XtalTreeBasic {
@@ -37,25 +43,11 @@ export class XtalCascadeBasic extends XtalTreeBasic {
               })
             },
             'p-d[prop="items"]': ({target}) =>{
-              const cascade = document.createElement('xtal-cascade');
-              cascade.id = 'myCascade';
-              // target.insertAdjacentHTML('afterend', /* html */`
-              //   <xtal-cascade id="myCascade"></xtal-cascade>
-              //   <p-d on="selected-root-nodes-changed" to="iron-list" prop="hasNewNodeSelection" val="target.id" m="1" skip-init></p-d>
-              // `);
-              target.insertAdjacentElement('afterend', cascade);
-              const pd = document.createElement('p-d');
-              decorate<HTMLElement>(pd, {
-                [attribs]:{
-                  on: 'selected-root-nodes-changed',
-                  to: 'iron-list',
-                  prop: 'hasNewNodeSelection',
-                  val: 'target.id',
-                  m: '1',
-                  'skip-init': true
-                }
-              } as any);
-              cascade.insertAdjacentElement('afterend', pd);
+              const clone = cascadeT.content.cloneNode(true);
+              let appendTarget = target;
+              Array.from((<any>clone).children).forEach(child =>{
+                appendTarget = appendTarget.insertAdjacentElement('afterend', child as HTMLElement);
+              })
             },
             [XtalCascade.is]: ({target}) => decorate<XtalCascade>(target as XtalCascade, {
               childrenFn: node => (<any>node).children,

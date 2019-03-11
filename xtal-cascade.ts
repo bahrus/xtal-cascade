@@ -1,5 +1,4 @@
 import { XtallatX } from 'xtal-element/xtal-latx';
-
 export interface ITreeNode {
 }
 
