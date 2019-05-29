@@ -8,12 +8,16 @@
   "author": "bahrus <anderson.bruce.b@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "xtal-tree": "0.0.62",
-    "trans-render": "0.0.83",
-    "@material/mwc-checkbox": "0.3.6"
+    "xtal-tree": "0.0.63",
+    "trans-render": "0.0.94",
+    "@material/mwc-checkbox": "0.5.0"
   },
   "devDependencies": {
     "jiife": "0.0.12",
-    "@webcomponents/webcomponentsjs": "2.2.7"
+    "@webcomponents/webcomponentsjs": "2.2.7",
+    "xtal-test": "0.0.18"
+  },
+  "scripts": {
+    "serve": "node node_modules/xtal-test/serve.js"
   }
 }
